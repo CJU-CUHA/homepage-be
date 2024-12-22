@@ -1,0 +1,80 @@
+name: Spring Boot with Gradle Deployment
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. JDK 21 설정 (Docker Compose에서 openjdk:21을 사용 중이므로 버전 맞춤)
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: gradle
+
+      # 3. 비밀 설정 파일 가져오기 (application.properties)
+      - name: Import secrets
+        run: |
+          mkdir -p ./src/main/resources
+          echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
+        shell: bash
+
+      # 4. Gradle을 사용하여 프로젝트 빌드 (clean을 추가하여 이전 빌드를 정리)
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build --no-daemon
+
+      # 5. 빌드가 성공적인지 확인 (JAR 파일이 생성되지 않으면 종료)
+      - name: Check if build was successful
+        run: |
+          if [ ! -f ./build/libs/*.jar ]; then
+            echo "Build failed: No JAR files found" && exit 1
+          fi
+
+      # 6. SSH 에이전트 설정
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 7. 원격 서버를 known_hosts에 추가하여 호스트 검증 우회
+      - name: Add remote server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      # 8. 빌드된 JAR 파일을 Rsync를 통해 원격 서버로 전송
+      - name: Transfer built jar via Rsync
+        run: |
+          rsync -avz --progress -e "ssh -p ${{ secrets.SERVER_PORT }}" ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/CUHA-homepage/build
+        shell: bash
+
+      # 9. 원격 서버에서 Docker Compose를 사용하여 애플리케이션 재시작
+      - name: Execute remote commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd ~/deploy/CUHA-homepage/build
+            # 이전 .jar 파일을 새로 빌드된 파일로 교체
+            mv *.jar app.jar
+            cd ~/deploy/CUHA-homepage
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
