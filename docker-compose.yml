@@ -1,18 +1,18 @@
-version: '3.3'
+version: "3.3"
 
 services:
   app:
     container_name: cuha-homepage
     image: openjdk:21
     volumes:
-      - ./build/libs:/root
+      - ./build:/root
     ports:
       - "10001:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/cuha
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=cuhazngk
-    command: sh -c "sleep 10; java -jar /root/homepage-0.0.1-SNAPSHOT.jar"
+    command: sh -c "sleep 10; java -jar /root/app.jar"
     restart: unless-stopped
     depends_on:
       - mysql
@@ -27,7 +27,7 @@ services:
       MYSQL_DATABASE: cuha
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_INITDB_SKIP_TZINFO: "yes"
-      INNODB_FORCE_RECOVERY: 3  # InnoDB 복구 모드 활성화
+      INNODB_FORCE_RECOVERY: 3 # InnoDB 복구 모드 활성화
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
