@@ -70,7 +70,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             # 프로젝트 디렉토리로 이동 후 git pull
-            cd /home/***/deploy/homepage-be
+            cd /home/***/deploy/
             git pull origin main
 
 
