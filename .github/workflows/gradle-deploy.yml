@@ -69,12 +69,21 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd ~/deploy/CUHA-homepage/build
-            git clone https://github.com/CJU-CUHA/homepage-be.git
-            ./gradlew build
-            gradle wrapper
+            # 이전 디렉토리에서 클린업
+            rm -rf homepage-be
+
+            # 최신 레포지토리 클론
+            git clone https://github.com/CJU-CUHA/homepage-be.git ~/deploy/CUHA-homepage
+
+            # Gradle Wrapper 초기화 및 빌드
+            cd ~/deploy/CUHA-homepage
             chmod +x gradlew
-            mv *.jar app.jar
+            ./gradlew build --no-daemon
+
+            # JAR 파일 이름 변경
+            mv ~/deploy/CUHA-homepage/build/libs/*.jar ~/deploy/CUHA-homepage/build/app.jar
+
+            # Docker Compose로 애플리케이션 재시작
             cd ~/deploy/CUHA-homepage
             docker compose down
             docker compose build --no-cache
