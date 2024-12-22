@@ -70,7 +70,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             # 프로젝트 디렉토리로 이동 후 git pull
-            cd /home/***/deploy/CUHA-homepage
+            cd /home/***/deploy/homepage-be
             git pull origin main
 
 
@@ -80,10 +80,10 @@ jobs:
 
 
             # JAR 파일 이름 변경
-            mv ~/deploy/CUHA-homepage/build/libs/*.jar ~/deploy/CUHA-homepage/build/app.jar
+            mv ~/deploy/CUHA-homepage/build/libs/*.jar ~/deploy/homepage-be/build/app.jar
 
             # Docker Compose로 애플리케이션 재시작
-            cd ~/deploy/CUHA-homepage
+            cd ~/deploy/homepage-be
             docker compose down
             docker compose build --no-cache
             docker compose up -d
