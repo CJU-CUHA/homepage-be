@@ -31,11 +31,11 @@ jobs:
           echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
         shell: bash
 
-      # 4. Gradle을 사용하여 프로젝트 빌드
-      - name: Build with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew build --no-daemon
+      # # 4. Gradle을 사용하여 프로젝트 빌드
+      # - name: Build with Gradle
+      #   run: |
+      #     chmod +x gradlew
+      #     ./gradlew build --no-daemon
 
       # 5. SSH 에이전트 설정
       - name: Setup SSH
@@ -52,19 +52,13 @@ jobs:
       # 7. 빌드된 JAR 파일을 SCP를 통해 원격 서버로 전송
       # - name: Transfer built jar via SCP
       #   run: |
-      #     scp -P ${{ secrets.SERVER_PORT }} ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/CUHA-homepage/build/
+      #     scp -P ${{ secrets.SERVER_PORT }} ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/homepage-be/build/
 
-      # 7. 빌드된 JAR 파일을 Rsync를 통해 원격 서버로 전송
-      #- name: Transfer built jar via Rsync
-      #  run: |
-      #    rsync -avz -e "ssh -p ${{ secrets.SERVER_PORT }}" ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/CUHA-homepage/build
-      #  shell: bash
-
-      # 7. 빌드된 JAR 파일을 Rsync를 통해 원격 서버로 전송
-      - name: Transfer built jar via Rsync
-        run: |
-          rsync -rtvz -e "ssh -p ${{ secrets.SERVER_PORT }}" ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/CUHA-homepage/build
-        shell: bash
+      # # 7. 빌드된 JAR 파일을 Rsync를 통해 원격 서버로 전송
+      # - name: Transfer built jar via Rsync
+      #   run: |
+      #     rsync -avz --progress -e "ssh -p ${{ secrets.SERVER_PORT }}" ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/homepage-be/build
+      #   shell: bash
 
       # 8. 원격 서버에서 Docker Compose를 사용하여 애플리케이션 재시작
       - name: Execute remote commands
@@ -75,9 +69,21 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd ~/deploy/CUHA-homepage/build
-            mv *.jar app.jar
-            cd ~/deploy/CUHA-homepage
+            # 프로젝트 디렉토리로 이동 후 git pull
+            cd /home/***/deploy/homepage-be
+            git pull origin main
+
+
+             # Gradle 빌드 설정
+            chmod +x gradlew
+            ./gradlew build --no-daemon
+
+
+            # JAR 파일 이름 변경
+            mv ~/deploy/homepage-be/build/libs/*.jar ~/deploy/homepage-be/build/app.jar
+
+            # Docker Compose로 애플리케이션 재시작
+            cd ~/deploy/homepage-be
             docker compose down
             docker compose build --no-cache
             docker compose up -d
