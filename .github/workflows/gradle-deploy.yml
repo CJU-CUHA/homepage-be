@@ -57,7 +57,7 @@ jobs:
       # 7. 빌드된 JAR 파일을 Rsync를 통해 원격 서버로 전송
       - name: Transfer built jar via Rsync
         run: |
-          rsync -avz -e --progress "ssh -p ${{ secrets.SERVER_PORT }}" ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/CUHA-homepage/build
+          rsync -avz --progress -e "ssh -p ${{ secrets.SERVER_PORT }}" ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/CUHA-homepage/build
         shell: bash
 
       # 8. 원격 서버에서 Docker Compose를 사용하여 애플리케이션 재시작
