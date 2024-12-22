@@ -45,6 +45,7 @@ application.properties
 # .idea/modules
 # *.iml
 # *.ipr
+.gradle
 
 # CMake
 cmake-build-*/

@@ -63,6 +63,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
+            cd ~/deploy/CUHA-homepage/build
+            mv *.jar app.jar
             cd ~/deploy/CUHA-homepage
             docker compose down
             docker compose build --no-cache
