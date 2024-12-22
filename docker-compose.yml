@@ -5,7 +5,7 @@ services:
     container_name: cuha-homepage
     image: openjdk:21
     volumes:
-      - ./build:/root
+      - ./build/libs:/root
     ports:
       - "10001:8080"
     environment:
@@ -29,7 +29,7 @@ services:
       MYSQL_INITDB_SKIP_TZINFO: "yes"
       INNODB_FORCE_RECOVERY: 3 # InnoDB 복구 모드 활성화
     volumes:
-      - mysql-data:./var/lib/mysql
+      - ./mysql-data:/var/lib/mysql
     ports:
       - "3308:3306"
     restart: unless-stopped
