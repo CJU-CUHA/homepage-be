@@ -72,6 +72,8 @@ jobs:
             cd ~/deploy/CUHA-homepage/build
             git clone https://github.com/CJU-CUHA/homepage-be.git
             ./gradlew build
+            gradle wrapper
+            chmod +x gradlew
             mv *.jar app.jar
             cd ~/deploy/CUHA-homepage
             docker compose down
