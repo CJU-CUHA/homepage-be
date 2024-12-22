@@ -70,10 +70,9 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             # 이전 디렉토리에서 클린업
-            rm -rf homepage-be
+            rm -rf /home/***/deploy/CUHA-homepage
+            git clone https://github.com/CJU-CUHA/homepage-be.git
 
-            # 최신 레포지토리 클론
-            git clone https://github.com/CJU-CUHA/homepage-be.git ~/deploy/CUHA-homepage
 
             # Gradle Wrapper 초기화 및 빌드
             cd ~/deploy/CUHA-homepage
