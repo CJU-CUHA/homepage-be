@@ -31,11 +31,11 @@ jobs:
           echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
         shell: bash
 
-      # 4. Gradle을 사용하여 프로젝트 빌드
-      - name: Build with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew build --no-daemon
+      # # 4. Gradle을 사용하여 프로젝트 빌드
+      # - name: Build with Gradle
+      #   run: |
+      #     chmod +x gradlew
+      #     ./gradlew build --no-daemon
 
       # 5. SSH 에이전트 설정
       - name: Setup SSH
@@ -54,11 +54,11 @@ jobs:
       #   run: |
       #     scp -P ${{ secrets.SERVER_PORT }} ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/CUHA-homepage/build/
 
-      # 7. 빌드된 JAR 파일을 Rsync를 통해 원격 서버로 전송
-      - name: Transfer built jar via Rsync
-        run: |
-          rsync -avz --progress -e "ssh -p ${{ secrets.SERVER_PORT }}" ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/CUHA-homepage/build
-        shell: bash
+      # # 7. 빌드된 JAR 파일을 Rsync를 통해 원격 서버로 전송
+      # - name: Transfer built jar via Rsync
+      #   run: |
+      #     rsync -avz --progress -e "ssh -p ${{ secrets.SERVER_PORT }}" ./build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/deploy/CUHA-homepage/build
+      #   shell: bash
 
       # 8. 원격 서버에서 Docker Compose를 사용하여 애플리케이션 재시작
       - name: Execute remote commands
@@ -70,6 +70,8 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd ~/deploy/CUHA-homepage/build
+            git clone https://github.com/CJU-CUHA/homepage-be.git
+            ./gradlew build
             mv *.jar app.jar
             cd ~/deploy/CUHA-homepage
             docker compose down
