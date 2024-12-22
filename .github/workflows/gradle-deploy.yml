@@ -33,7 +33,9 @@ jobs:
 
       # 4. Gradle을 사용하여 프로젝트 빌드
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon
+        run: |
+        chmod +x gradlew
+        ./gradlew build --no-daemon
 
       # 5. SSH 에이전트 설정
       - name: Setup SSH
