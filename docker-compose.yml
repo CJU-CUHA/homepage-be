@@ -29,7 +29,7 @@ services:
       MYSQL_INITDB_SKIP_TZINFO: "yes"
       INNODB_FORCE_RECOVERY: 3 # InnoDB 복구 모드 활성화
     volumes:
-      - ./mysql-data: /var/lib/mysql
+      - ./mysql-data:/var/lib/mysql
     expose: 
       - "3306"
     restart: unless-stopped
