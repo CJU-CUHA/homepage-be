@@ -75,6 +75,7 @@ jobs:
 
 
              # Gradle 빌드 설정
+             cd /homepage-be
             chmod +x gradlew
             ./gradlew build --no-daemon
 
