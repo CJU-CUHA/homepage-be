@@ -27,11 +27,11 @@ services:
       MYSQL_DATABASE: cuha
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_INITDB_SKIP_TZINFO: "yes"
-      INNODB_FORCE_RECOVERY: 3 # InnoDB 복구 모드 활성화
+      INNODB_FORCE_RECOVERY: 3
     volumes:
       - ./mysql-data:/var/lib/mysql
-    expose: 
-      - "3306"
+    ports:
+      - "3306:3306"  # 외부에서 MySQL 접근 가능
     restart: unless-stopped
     networks:
       - app-network
