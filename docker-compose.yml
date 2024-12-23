@@ -31,6 +31,7 @@ services:
       INNODB_FORCE_RECOVERY: 1
     volumes:
       - ./mysql-data:/var/lib/mysql
+      - ./mysql-data/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3308:3306"  # 외부에서 MySQL 접근 가능
     restart: unless-stopped
