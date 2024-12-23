@@ -22,6 +22,7 @@ services:
   mysql:
     container_name: cuha-mysql
     image: mysql:8.0.37
+    user: "${UID}:${GID}"
     environment:
       MYSQL_ROOT_PASSWORD: cuhazngk
       MYSQL_DATABASE: cuha
