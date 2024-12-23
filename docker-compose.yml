@@ -27,7 +27,7 @@ services:
       MYSQL_DATABASE: cuha
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_INITDB_SKIP_TZINFO: "yes"
-      INNODB_FORCE_RECOVERY: 3
+      INNODB_FORCE_RECOVERY: 1
     volumes:
       - ./mysql-data:/var/lib/mysql
     ports:
