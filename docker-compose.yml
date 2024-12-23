@@ -30,8 +30,8 @@ services:
       INNODB_FORCE_RECOVERY: 3 # InnoDB 복구 모드 활성화
     volumes:
       - ./mysql-data:/var/lib/mysql
-    ports:
-      - "3308:3306"
+    expose: 
+      - "3306"
     restart: unless-stopped
     networks:
       - app-network
