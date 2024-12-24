@@ -9,7 +9,7 @@ services:
     ports:
       - "10001:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/cuha
+      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/cuha
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=cuhazngk
     command: sh -c "java -jar /root/app.jar"
@@ -30,7 +30,7 @@ services:
       INNODB_FORCE_RECOVERY: 1
     volumes:
       - ./mysql-data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     expose:
       - "3306"  # 외부에서 MySQL 접근 가능
     restart: unless-stopped
