@@ -1,12 +1,12 @@
 package CUHA.homepage.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.cglib.core.Local;
 
 import java.security.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,5 +18,17 @@ public class HumanResourceOffice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String projectName;
+
+    private LocalDate startAt;
+    private LocalDate endAt;
+
+    @ManyToOne
+    private User resource;
+
+    private LocalDateTime createdAt;
+
+
 
 }
