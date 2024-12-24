@@ -30,7 +30,7 @@ services:
       INNODB_FORCE_RECOVERY: 1
     volumes:
       - ./mysql-data:/var/lib/mysql
-      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     expose:
       - "3306"  # 외부에서 MySQL 접근 가능
     restart: unless-stopped
