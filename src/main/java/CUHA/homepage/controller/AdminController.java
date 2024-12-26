@@ -1,5 +1,6 @@
 package CUHA.homepage.controller;
 
+import CUHA.homepage.security.dto.newsDTO.NewsMessageResponse;
 import CUHA.homepage.security.dto.userDTO.UserFindResponse;
 import CUHA.homepage.security.dto.userDTO.UserRUDRequest;
 import CUHA.homepage.security.dto.userDTO.UserRUDResponse;
@@ -27,7 +28,6 @@ public class AdminController {
     @PutMapping("/set/updateUser")
     public UserRUDResponse setUserRole(@RequestBody UserUpdateRequest username, HttpServletRequest request) {
         return userService.updateUserAdmin(request,username);
-
     }
 
     @GetMapping("/findusers")
@@ -40,9 +40,17 @@ public class AdminController {
     }
 
     @PostMapping("/saveGeekNews")
-    public void saveGeek() throws IOException {
-        newsService.saveGeekNews();
+    public NewsMessageResponse saveGeek() throws IOException {
+        return newsService.saveGeekNews();
     }
+
+    @PostMapping("/saveGeekNews")
+    public NewsMessageResponse saveOneGeek() throws IOException {
+        return newsService.saveGeekOneNews();
+    }
+
+
+
 
 //    @PostMapping("/saveBoanNews")
 //    public void saveBoan() throws IOException {

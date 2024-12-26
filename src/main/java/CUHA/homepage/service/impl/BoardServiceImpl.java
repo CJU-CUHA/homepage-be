@@ -67,7 +67,6 @@ public class BoardServiceImpl implements BoardService {
 
         for (BoardFile file : fileId) {
             boardFileRepository.deleteByBoard_Id(file.getBoard().getId());
-            examFileRepository.deleteByExam_Id(file.getExam().getId());
         }
         boardRepository.deleteById(deleteBoard.getId());
         return BoardmessageResponse.builder().message("삭제되었습니다.").build();
