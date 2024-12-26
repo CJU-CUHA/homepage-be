@@ -25,9 +25,6 @@ public class BoardFile {
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
-    @ManyToOne
-    @JoinColumn(name="exam_id")
-    private Exam exam;
     @CreatedDate
     private LocalDateTime created_at;
 }
