@@ -44,7 +44,7 @@ public class AdminController {
         return newsService.saveGeekNews();
     }
 
-    @PostMapping("/saveGeekNews")
+    @PostMapping("/saveGeekOneNews")
     public NewsMessageResponse saveOneGeek() throws IOException {
         return newsService.saveGeekOneNews();
     }
