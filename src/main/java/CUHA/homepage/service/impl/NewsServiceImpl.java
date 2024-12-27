@@ -2,6 +2,7 @@ package CUHA.homepage.service.impl;
 
 import CUHA.homepage.model.News;
 import CUHA.homepage.repository.NewsRepository;
+import CUHA.homepage.security.dto.newsDTO.NewsMessageResponse;
 import CUHA.homepage.service.NewsService;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
@@ -31,25 +32,66 @@ public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
 
     @Override
-    public void saveGeekNews() throws IOException {
+    public NewsMessageResponse saveGeekNews() throws IOException {
         String url = "https://news.hada.io/new";
         Document doc = Jsoup.connect(url).get();
         Elements elements = doc.getElementsByClass("topic_row");
 //        System.out.println(elements);
-        Elements linkElements = doc.getElementsByClass("topic_row").select("a[href]");
+//        Elements linkElements = doc.getElementsByClass("topic_row").select("a[href]");
         for(Element element : elements) {
             String title = element.select("div.topictitle > a > h1").text();
             String content = element.select("div.topicdesc > a").text();
             String saveUrl=element.select("div.topicdesc > a").attr("href");
-            newsRepository.save(News.builder()
-                    .title(title)
-                    .content(content)
-                    .url(url.substring(0,url.length()-3)+saveUrl)
-                    .boan(false)
-                    .build());
+
+            if(newsRepository.existsByTitle(title)){
+                newsRepository.save(News.builder()
+                        .title(title)
+                        .content(content)
+                        .url(url.substring(0,url.length()-3)+saveUrl)
+                        .boan(false)
+                        .build());
+            }
+            else{
+                return NewsMessageResponse.builder()
+                        .message("해당 기사는 중복되었습니다.").build();
+            }
+
         }
+        return NewsMessageResponse.builder()
+                .message("저장에 성공하였습니다.").build();
 
     }
+
+    @Override
+    public NewsMessageResponse saveGeekOneNews() throws IOException {
+        String url = "https://news.hada.io/new";
+        Document doc = Jsoup.connect(url).get();
+        Elements elements = doc.getElementsByClass("topic_row");
+//        System.out.println(elements);
+//        Elements linkElements = doc.getElementsByClass("topic_row").select("a[href]");
+
+        String title = elements.get(0).select("div.topictitle > a > h1").text();
+        String content = elements.get(0).select("div.topicdesc > a").text();
+        String saveUrl=elements.get(0).select("div.topicdesc > a").attr("href");
+
+            if(newsRepository.existsByTitle(title)){
+                newsRepository.save(News.builder()
+                        .title(title)
+                        .content(content)
+                        .url(url.substring(0,url.length()-3)+saveUrl)
+                        .boan(false)
+                        .build());
+                return NewsMessageResponse.builder()
+                        .message("저장에 성공하였습니다.").build();
+            }
+            else{
+                return NewsMessageResponse.builder()
+                        .message("존재하는 게시글이 섞여 있습니다.").build();
+            }
+
+
+    }
+
     //보류
     @Override
     public void saveBoanNews() throws IOException {

@@ -13,7 +13,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "boardfile")
 public class BoardFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +24,6 @@ public class BoardFile {
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
-    @ManyToOne
-    @JoinColumn(name="exam_id")
-    private Exam exam;
     @CreatedDate
     private LocalDateTime created_at;
 }

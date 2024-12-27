@@ -9,7 +9,6 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="solvedexam")
 public class SolvedExam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

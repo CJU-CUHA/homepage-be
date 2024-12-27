@@ -10,5 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface NewsRepository extends JpaRepository<News, Long> {
     Page<News> findAll(Pageable pageable);
     Page<News> findAllByBoanFalse(Pageable pageable);
+    boolean existsByTitle(String title);
 
 }
