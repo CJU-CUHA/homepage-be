@@ -1,7 +1,6 @@
 package CUHA.homepage.service.impl;
 
 import CUHA.homepage.service.APIService;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -12,9 +11,8 @@ import okhttp3.ResponseBody;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,10 +61,16 @@ public class APIServiceImpl implements APIService {
                     Map<String,String> jsonMap = new HashMap<>();
                     jsonMap.put("url",event.get("url").toString());
                     jsonMap.put("weight",String.valueOf(event.get("weight")));
-                    jsonMap.put("start",event.get("start").toString());
-                    jsonMap.put("finish",event.get("finish").toString());
+                    jsonMap.put("start",ZonedDateTime.parse(event.get("start").toString())
+                            .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    jsonMap.put("finish",ZonedDateTime.parse(event.get("finish").toString())
+                            .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                     List<Map<String,Object>> organizers = (List<Map<String,Object>>)event.get("organizers");
-
+                    ZonedDateTime.parse(event.get("finish").toString())
+                            .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                     for (Map<String,Object> organizer : organizers) {
                         jsonMap.put("name",organizer.get("name").toString());
 

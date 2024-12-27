@@ -1,5 +1,6 @@
 package CUHA.homepage.configuration;
 
+import CUHA.homepage.model.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,7 +20,8 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/","/home","/swagger-ui.html","/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api","/home","/swagger-ui.html","/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/admin").hasAnyRole(UserRole.admin.name(), UserRole.staff.name())
                         .anyRequest().permitAll());
 
         return http.build();

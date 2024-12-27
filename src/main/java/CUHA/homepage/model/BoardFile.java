@@ -13,7 +13,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "boardfile")
 public class BoardFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
