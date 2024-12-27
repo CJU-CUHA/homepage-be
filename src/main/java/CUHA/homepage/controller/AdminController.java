@@ -23,7 +23,7 @@ public class AdminController {
     @PutMapping("/set/score")
     public UserRUDResponse setScore(@RequestBody UserRUDRequest username,Long score) {
         return userService.setScore(username, score);
-    }
+    }//
 
     @PutMapping("/set/updateUser")
     public UserRUDResponse setUserRole(@RequestBody UserUpdateRequest username, HttpServletRequest request) {
