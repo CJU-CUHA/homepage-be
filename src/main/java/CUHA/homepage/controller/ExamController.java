@@ -9,6 +9,7 @@ import CUHA.homepage.service.BoardService;
 import CUHA.homepage.service.ExamService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,33 +20,33 @@ public class ExamController {
     private final ExamService examService;
 
     @PostMapping("/api/exam")
-    public ExamMessageResponse postExam(@RequestBody ExamRequest examRequest, HttpServletRequest request) {
-        return examService.addExam(examRequest,request);
+    public ResponseEntity<ExamMessageResponse> postExam(@RequestBody ExamRequest examRequest, HttpServletRequest request) {
+        return ResponseEntity.ok().body(examService.addExam(examRequest,request));
     }
 
     @GetMapping("/api/exam")
-    public ExamFindResponse getExam(@RequestParam Long id) {
-        return examService.getExam(id);
+    public ResponseEntity<ExamFindResponse> getExam(@RequestParam Long id) {
+        return ResponseEntity.ok().body(examService.getExam(id));
     }
 
     @GetMapping("/api/exams")
-    public List<ExamFindResponse> getExam() {
-        return examService.getExams();
+    public ResponseEntity<List<ExamFindResponse>> getExam() {
+        return ResponseEntity.ok().body(examService.getExams());
     }
 
     @PutMapping("/api/exam")
-    public ExamMessageResponse updateExam(@RequestBody ExamUpdateRequeest examUpdateRequeest, HttpServletRequest request) {
-        return examService.updateExam(examUpdateRequeest,request);
+    public ResponseEntity<ExamMessageResponse> updateExam(@RequestBody ExamUpdateRequeest examUpdateRequeest, HttpServletRequest request) {
+        return ResponseEntity.ok().body(examService.updateExam(examUpdateRequeest,request));
     }
 
     @DeleteMapping("/api/exam")
-    public ExamMessageResponse deleteExam(@RequestParam Long id, HttpServletRequest request) {
-        return examService.deleteExam(id,request);
+    public ResponseEntity<ExamMessageResponse> deleteExam(@RequestParam Long id, HttpServletRequest request) {
+        return ResponseEntity.ok().body(examService.deleteExam(id,request));
     }
 
     @PostMapping("/api/checkAnswer")
-    public ExamMessageResponse checkAnswer(@RequestBody ExamAnswerRequest answer, HttpServletRequest request) {
-        return examService.checkAnswer(answer,request);
+    public ResponseEntity<ExamMessageResponse> checkAnswer(@RequestBody ExamAnswerRequest answer, HttpServletRequest request) {
+        return ResponseEntity.ok().body(examService.checkAnswer(answer,request));
     }
 
 }

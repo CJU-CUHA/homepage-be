@@ -9,6 +9,7 @@ import CUHA.homepage.service.NewsService;
 import CUHA.homepage.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -21,32 +22,32 @@ public class AdminController {
     private final UserService userService;
     private final NewsService newsService;
     @PutMapping("/set/score")
-    public UserRUDResponse setScore(@RequestBody UserRUDRequest username,Long score) {
-        return userService.setScore(username, score);
-    }//
+    public ResponseEntity<UserRUDResponse> setScore(@RequestBody UserRUDRequest username, Long score) {
+        return ResponseEntity.ok().body(userService.setScore(username, score));
+    }
 
     @PutMapping("/set/updateUser")
-    public UserRUDResponse setUserRole(@RequestBody UserUpdateRequest username, HttpServletRequest request) {
-        return userService.updateUserAdmin(request,username);
+    public ResponseEntity<UserRUDResponse> setUserRole(@RequestBody UserUpdateRequest username, HttpServletRequest request) {
+        return ResponseEntity.ok().body(userService.updateUserAdmin(request,username));
     }
 
     @GetMapping("/findusers")
-    public UserFindResponse findUsers(@RequestParam String username) {
-        return userService.getUser(username);
+    public ResponseEntity<UserFindResponse> findUsers(@RequestParam String username) {
+        return ResponseEntity.ok().body(userService.getUser(username));
     }
     @GetMapping("/getUsers")
-    public List<UserFindResponse> getUsers() {
-        return userService.getUsers();
+    public ResponseEntity<List<UserFindResponse>> getUsers() {
+        return ResponseEntity.ok().body(userService.getUsers());
     }
 
     @PostMapping("/saveGeekNews")
-    public NewsMessageResponse saveGeek() throws IOException {
-        return newsService.saveGeekNews();
+    public ResponseEntity<NewsMessageResponse> saveGeek() throws IOException {
+        return ResponseEntity.ok().body(newsService.saveGeekNews());
     }
 
     @PostMapping("/saveGeekOneNews")
-    public NewsMessageResponse saveOneGeek() throws IOException {
-        return newsService.saveGeekOneNews();
+    public ResponseEntity<NewsMessageResponse> saveOneGeek() throws IOException {
+        return ResponseEntity.ok().body(newsService.saveGeekOneNews());
     }
 
 

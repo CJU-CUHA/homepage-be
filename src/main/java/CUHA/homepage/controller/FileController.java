@@ -26,21 +26,21 @@ public class FileController {
     @PostMapping(value = "/api/generalfilesave",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FileResponse>addGeneralFile(@RequestPart MultipartFile file, BoardFileSaveRequest boardFileSaveRequest) throws IOException {
 
-        return ResponseEntity.ok(boardFileService.saveFile(file, boardFileSaveRequest));
+        return ResponseEntity.ok().body(boardFileService.saveFile(file, boardFileSaveRequest));
 
     }
     @PostMapping(value = "/api/examfilesave",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FileResponse>addExamFile(@RequestPart MultipartFile file, ExamFileSaveRequest examFileSaveRequest) throws IOException {
 
-        return ResponseEntity.ok(examFileService.saveFile(file, examFileSaveRequest));
+        return ResponseEntity.ok().body(examFileService.saveFile(file, examFileSaveRequest));
     }
     @GetMapping("/api/examfile")
     public ResponseEntity<List<ExamFileResponse>>fildExamFile(@RequestParam ExamFileSaveRequest fileId) throws IOException {
-        return ResponseEntity.ok(examFileService.getFile(fileId));
+        return ResponseEntity.ok().body(examFileService.getFile(fileId));
     }
     @GetMapping("/api/generalfile")
     public ResponseEntity<List<GeneralFileResponse>>findExamFile(@RequestParam BoardFileSaveRequest fileId) throws IOException {
-        return ResponseEntity.ok(boardFileService.getFile(fileId));
+        return ResponseEntity.ok().body(boardFileService.getFile(fileId));
     }
 
     @GetMapping(value = "/api/boardfiledownload", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
