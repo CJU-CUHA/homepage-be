@@ -36,4 +36,7 @@ public class SecurityConfiguration {
     public String passwordDecoder(){
         return new BCryptPasswordEncoder().encode("password");
     }
+
+    
+
 }
