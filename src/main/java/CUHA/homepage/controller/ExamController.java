@@ -9,6 +9,7 @@ import CUHA.homepage.service.BoardService;
 import CUHA.homepage.service.ExamService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,10 @@ public class ExamController {
         return ResponseEntity.ok().body(examService.getExams());
     }
 
+    @GetMapping("/api/examcategory")
+    public ResponseEntity<Page<ExamFindResponse>> getExamCategory(@RequestParam int page, @RequestParam int size, @RequestParam String category) {
+        return ResponseEntity.ok().body(examService.getExamsByCategory(category,page,size));
+    }
     @PutMapping("/api/exam")
     public ResponseEntity<ExamMessageResponse> updateExam(@RequestBody ExamUpdateRequeest examUpdateRequeest, HttpServletRequest request) {
         return ResponseEntity.ok().body(examService.updateExam(examUpdateRequeest,request));

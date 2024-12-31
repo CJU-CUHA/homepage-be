@@ -8,6 +8,7 @@ import CUHA.homepage.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +26,8 @@ public class CommentController {
     }
 
     @GetMapping("/api/comments")
-    public ResponseEntity<List<CommentResponse>> getAllComments() {
-        return ResponseEntity.ok().body(commentService.getAllComments());
-    }
-
-    @GetMapping("/api/comment")
-    public ResponseEntity<List<CommentResponse>> getCommentByBoard(@RequestParam Long id) {
-        return ResponseEntity.ok().body(commentService.getCommentById(id));
+    public ResponseEntity<Page<CommentResponse>> getCommentByBoard(@RequestParam Long id, @RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok().body(commentService.getCommentsByBoard_Id(id,page,size));
     }
 
     @PutMapping("/api/comment")

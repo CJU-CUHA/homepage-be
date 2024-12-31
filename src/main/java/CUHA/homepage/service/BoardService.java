@@ -15,7 +15,6 @@ public interface BoardService {
     List<BoardResponse> getBoards();
 
     Page<BoardResponse> getBoardsPage(int page,int size);
-    Page<BoardResponse> getBoardsPageByTitle(int page,int size,String title);
     Page<BoardResponse> getBoardsPageByAuthor(int page,int size,String author);
 
 

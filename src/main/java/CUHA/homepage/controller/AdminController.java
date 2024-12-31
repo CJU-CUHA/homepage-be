@@ -9,6 +9,7 @@ import CUHA.homepage.service.NewsService;
 import CUHA.homepage.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +37,8 @@ public class AdminController {
         return ResponseEntity.ok().body(userService.getUser(username));
     }
     @GetMapping("/getUsers")
-    public ResponseEntity<List<UserFindResponse>> getUsers() {
-        return ResponseEntity.ok().body(userService.getUsers());
+    public ResponseEntity<Page<UserFindResponse>> getUsers(@RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok().body(userService.getUsers(page,size));
     }
 
     @PostMapping("/saveGeekNews")
