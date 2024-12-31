@@ -14,6 +14,9 @@ import CUHA.homepage.service.CommentService;
 import CUHA.homepage.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -87,5 +90,16 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(updateComment);
         return CommentMessageResponse.builder().message("수정되었습니다.").build();
 
+    }
+
+    @Override
+    public Page<CommentResponse> getCommentsByBoard_Id(Long boardId,int page,int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        Long id=boardRepository.findById(boardId).get().getId();
+        return commentRepository.findAllByBoard_Id(id,pageable).map(x->CommentResponse.builder()
+                .id(x.getId())
+                .comment(x.getComment())
+                .author(x.getAuthor().getUsername())
+                .build());
     }
 }

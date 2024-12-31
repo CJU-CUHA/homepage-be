@@ -10,6 +10,9 @@ import CUHA.homepage.security.dto.boardDTO.*;
 import CUHA.homepage.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -96,5 +99,37 @@ public class BoardServiceImpl implements BoardService {
                 .title(x.getTitle())
                 .content(x.getContent())
                 .build()).toList();
+    }
+
+    @Override
+    public Page<BoardResponse> getBoardsPage(int page,int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return boardRepository.findAll(pageable).map(x->BoardResponse.builder().id(x.getId())
+                .author(x.getAuthor().getUsername())
+                .title(x.getTitle())
+                .content(x.getContent())
+                .build());
+
+
+    }
+
+    @Override
+    public Page<BoardResponse> getBoardsPageByTitle(int page, int size, String title) {
+        Pageable pageable = PageRequest.of(page,size);
+        return boardRepository.findAllByTitleContaining(title,pageable).map(x->BoardResponse.builder()
+                .author(x.getAuthor().getUsername())
+                .title(x.getTitle())
+                .content(x.getContent())
+                .build());
+    }
+
+    @Override
+    public Page<BoardResponse> getBoardsPageByAuthor(int page, int size, String author) {
+        Pageable pageable = PageRequest.of(page,size);
+        return boardRepository.findAllByTitleContaining(author,pageable).map(x->BoardResponse.builder()
+                .author(x.getAuthor().getUsername())
+                .title(x.getTitle())
+                .content(x.getContent())
+                .build());
     }
 }

@@ -1,9 +1,6 @@
 package CUHA.homepage.service.impl;
 
-import CUHA.homepage.model.Board;
-import CUHA.homepage.model.Exam;
-import CUHA.homepage.model.SolvedExam;
-import CUHA.homepage.model.User;
+import CUHA.homepage.model.*;
 import CUHA.homepage.repository.ExamRepository;
 import CUHA.homepage.repository.SolvedExamRepository;
 import CUHA.homepage.repository.UserRepository;
@@ -12,6 +9,9 @@ import CUHA.homepage.security.dto.examDTO.*;
 import CUHA.homepage.service.ExamService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -71,6 +71,20 @@ public class ExamServiceImpl implements ExamService {
                 .score(getExam.getScore())
                 .category(getExam.getCategory())
                 .build();
+    }
+
+    @Override
+    public Page<ExamFindResponse> getExamsByCategory(String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        Category category1 = Category.valueOf(category);
+        return examRepository.getExamsByCategory(category1,pageable).map(x-> ExamFindResponse.builder()
+                .id(x.getId())
+                .title(x.getTitle())
+                .content(x.getContent())
+                .author(x.getAuthor().getUsername())
+                .score(x.getScore())
+                .category(category1)
+                .build());
     }
 
     @Override

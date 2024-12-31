@@ -10,6 +10,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -126,6 +129,20 @@ public class UserServiceImpl implements UserService {
                 .isActive(x.isActive())
                 .created_at(x.getCreated_at())
                 .build()).toList();
+    }
+
+    @Override
+    public Page<UserFindResponse> getUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable).map(x-> UserFindResponse
+                .builder()
+                .username(x.getUsername())
+                .score(x.getScore())
+                .gender(x.getGender())
+                .userRole(x.getUserRole())
+                .isActive(x.isActive())
+                .created_at(x.getCreated_at())
+                .build());
     }
 
 //    @Override
