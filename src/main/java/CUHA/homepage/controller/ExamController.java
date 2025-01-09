@@ -1,11 +1,6 @@
 package CUHA.homepage.controller;
 
-import CUHA.homepage.security.dto.boardDTO.BoardFindRequest;
-import CUHA.homepage.security.dto.boardDTO.BoardRequest;
-import CUHA.homepage.security.dto.boardDTO.BoardResponse;
-import CUHA.homepage.security.dto.boardDTO.BoardmessageResponse;
 import CUHA.homepage.security.dto.examDTO.*;
-import CUHA.homepage.service.BoardService;
 import CUHA.homepage.service.ExamService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +35,7 @@ public class ExamController {
         return ResponseEntity.ok().body(examService.getExamsByCategory(category,page,size));
     }
     @PutMapping("/api/exam")
-    public ResponseEntity<ExamMessageResponse> updateExam(@RequestBody ExamUpdateRequeest examUpdateRequeest, HttpServletRequest request) {
+    public ResponseEntity<ExamMessageResponse> updateExam(@RequestBody ExamUpdateRequest examUpdateRequeest, HttpServletRequest request) {
         return ResponseEntity.ok().body(examService.updateExam(examUpdateRequeest,request));
     }
 

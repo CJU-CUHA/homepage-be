@@ -4,7 +4,6 @@ import CUHA.homepage.model.*;
 import CUHA.homepage.repository.ExamRepository;
 import CUHA.homepage.repository.SolvedExamRepository;
 import CUHA.homepage.repository.UserRepository;
-import CUHA.homepage.security.dto.boardDTO.BoardmessageResponse;
 import CUHA.homepage.security.dto.examDTO.*;
 import CUHA.homepage.service.ExamService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +16,6 @@ import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -117,7 +115,7 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public ExamMessageResponse updateExam(ExamUpdateRequeest examUpdateRequeest, HttpServletRequest request) {
+    public ExamMessageResponse updateExam(ExamUpdateRequest examUpdateRequeest, HttpServletRequest request) {
         Optional<Exam> findExam=examRepository.findById(examUpdateRequeest.getId());
         if(!findExam.isPresent()) {
             return ExamMessageResponse.builder().message("존재하지 않는 게시물입니다.").build();

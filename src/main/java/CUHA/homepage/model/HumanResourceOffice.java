@@ -27,7 +27,7 @@ public class HumanResourceOffice {
     @ManyToOne
     private User resource;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime created_at;
 
 
 

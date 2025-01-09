@@ -12,6 +12,6 @@ public interface ExamService {
     ExamFindResponse getExam(Long examId);
     Page<ExamFindResponse> getExamsByCategory(String category, int page, int size);
     ExamMessageResponse checkAnswer(ExamAnswerRequest examAnswerRequest, HttpServletRequest request);
-    ExamMessageResponse updateExam(ExamUpdateRequeest examUpdateRequeest, HttpServletRequest request);
+    ExamMessageResponse updateExam(ExamUpdateRequest examUpdateRequeest, HttpServletRequest request);
     ExamMessageResponse deleteExam(Long examId,HttpServletRequest request);
 }

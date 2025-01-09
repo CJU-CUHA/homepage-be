@@ -1,9 +1,6 @@
 package CUHA.homepage.security.dto.examDTO;
 
 import CUHA.homepage.model.Category;
-import CUHA.homepage.model.User;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 @Getter
@@ -11,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExamUpdateRequeest {
+public class ExamUpdateRequest {
     private Long id;
     private String title;
     private String content;

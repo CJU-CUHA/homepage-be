@@ -15,6 +15,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+
     @PostMapping("/api/board")
     public ResponseEntity<BoardmessageResponse> postBoard(@RequestBody BoardRequest boardRequest, HttpServletRequest request) {
         return ResponseEntity.ok().body(boardService.addBoard(request,boardRequest));
