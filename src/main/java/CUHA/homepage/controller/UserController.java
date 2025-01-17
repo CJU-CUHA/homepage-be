@@ -34,7 +34,7 @@ public class UserController {
             return ResponseEntity.ok().body(loginUser);
         }
     }
-    @PutMapping("/set/userInfo")
+    @PutMapping("/set/userinfo")
     public ResponseEntity<UserRUDResponse> updateuser(@RequestBody UserjoinRequest username){
         username.setPassword(username.getPassword());
         return ResponseEntity.ok().body(userService.updateUser(username));
