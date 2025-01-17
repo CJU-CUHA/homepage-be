@@ -27,7 +27,7 @@ public class AdminController {
         return ResponseEntity.ok().body(userService.setScore(username, score));
     }
 
-    @PutMapping("/set/updateUser")
+    @PutMapping("/set/updateuser")
     public ResponseEntity<UserRUDResponse> setUserRole(@RequestBody UserUpdateRequest username, HttpServletRequest request) {
         return ResponseEntity.ok().body(userService.updateUserAdmin(request,username));
     }
@@ -36,17 +36,17 @@ public class AdminController {
     public ResponseEntity<UserFindResponse> findUsers(@RequestParam String username) {
         return ResponseEntity.ok().body(userService.getUser(username));
     }
-    @GetMapping("/getUsers")
+    @GetMapping("/getusers")
     public ResponseEntity<Page<UserFindResponse>> getUsers(@RequestParam int page, @RequestParam int size) {
         return ResponseEntity.ok().body(userService.getUsers(page,size));
     }
 
-    @PostMapping("/saveGeekNews")
+    @PostMapping("/savegeeknews")
     public ResponseEntity<NewsMessageResponse> saveGeek() throws IOException {
         return ResponseEntity.ok().body(newsService.saveGeekNews());
     }
 
-    @PostMapping("/saveGeekOneNews")
+    @PostMapping("/savegeekonenews")
     public ResponseEntity<NewsMessageResponse> saveOneGeek() throws IOException {
         return ResponseEntity.ok().body(newsService.saveGeekOneNews());
     }

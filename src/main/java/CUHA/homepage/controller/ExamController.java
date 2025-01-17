@@ -44,7 +44,7 @@ public class ExamController {
         return ResponseEntity.ok().body(examService.deleteExam(id,request));
     }
 
-    @PostMapping("/api/checkAnswer")
+    @PostMapping("/api/checkanswer")
     public ResponseEntity<ExamMessageResponse> checkAnswer(@RequestBody ExamAnswerRequest answer, HttpServletRequest request) {
         return ResponseEntity.ok().body(examService.checkAnswer(answer,request));
     }
