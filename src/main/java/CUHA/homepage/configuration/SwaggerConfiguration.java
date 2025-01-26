@@ -15,11 +15,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 //자격증명 해제하는거 필요함
+
 @Configuration
 
-public class SwaggerConfiguration {
+public class SwaggerConfiguration{
+//public class SwaggerConfiguration implements WebMvcConfigurer {
     @Bean
     public OpenAPI openAPI(){
         return new OpenAPI()
@@ -30,6 +34,11 @@ public class SwaggerConfiguration {
             .description("backend_saram_gu_ham")
             .version("1.0.0");
 
-
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+//        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+//        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+//    }
 
 }

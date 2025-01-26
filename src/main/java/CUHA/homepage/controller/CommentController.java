@@ -1,6 +1,7 @@
 package CUHA.homepage.controller;
 
 import CUHA.homepage.model.Comment;
+import CUHA.homepage.security.dto.commentDTO.CocommentRequest;
 import CUHA.homepage.security.dto.commentDTO.CommentMessageResponse;
 import CUHA.homepage.security.dto.commentDTO.CommentRequest;
 import CUHA.homepage.security.dto.commentDTO.CommentResponse;
@@ -23,6 +24,11 @@ public class CommentController {
     @PostMapping("/api/comment")
     public ResponseEntity<CommentMessageResponse> addComment(@RequestBody CommentRequest commentRequest, HttpServletRequest request) {
         return ResponseEntity.ok().body(commentService.addComment(commentRequest,request));
+    }
+
+    @PostMapping("/api/cocomment")
+    public ResponseEntity<CommentMessageResponse> addCocomment(@RequestBody CocommentRequest cocommentRequest, HttpServletRequest request) {
+        return ResponseEntity.ok().body(commentService.addCocomment(cocommentRequest,request));
     }
 
     @GetMapping("/api/comments")

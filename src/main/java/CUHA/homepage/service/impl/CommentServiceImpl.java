@@ -1,17 +1,14 @@
 package CUHA.homepage.service.impl;
 
-import CUHA.homepage.model.Board;
 import CUHA.homepage.model.Comment;
 import CUHA.homepage.repository.BoardRepository;
 import CUHA.homepage.repository.CommentRepository;
 import CUHA.homepage.repository.UserRepository;
-import CUHA.homepage.security.dto.boardDTO.BoardmessageResponse;
-import CUHA.homepage.security.dto.commentDTO.AllCommentsResponse;
+import CUHA.homepage.security.dto.commentDTO.CocommentRequest;
 import CUHA.homepage.security.dto.commentDTO.CommentMessageResponse;
 import CUHA.homepage.security.dto.commentDTO.CommentRequest;
 import CUHA.homepage.security.dto.commentDTO.CommentResponse;
 import CUHA.homepage.service.CommentService;
-import CUHA.homepage.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,6 +38,30 @@ public class CommentServiceImpl implements CommentService {
                 .build();
         commentRepository.save(comment);
         return CommentMessageResponse.builder().message("댓글이 등록되었습니다.").build();
+    }
+
+    @Override
+    public CommentMessageResponse addCocomment(CocommentRequest cocommentRequest, HttpServletRequest request) {
+        if (commentRepository.findById(cocommentRequest.getComment_id()).get().getParent() != null) {
+            return CommentMessageResponse.builder().message("대댓글에는 댓글을 달 수 없습니다.").build();
+        }
+
+        Long boardId = commentRepository.findById(cocommentRequest.getComment_id()).get().getBoard().getId();
+        Comment cocoment = Comment.builder()
+                .parent(commentRepository.findById(cocommentRequest.getComment_id()).get()) // 부모 지정
+                .comment(cocommentRequest.getComment())
+                .board(boardRepository.findById(boardId).get())
+                .author(userRepository.findByUsername(request.getSession().getAttribute("user").toString()).get())
+                .created_at(LocalDateTime.now())
+                .build();
+        commentRepository.save(cocoment); // 대댓글 저장
+
+        // 부모 댓글에 자식 댓글 지정
+        Comment parent = commentRepository.findById(cocommentRequest.getComment_id()).get();
+        parent.setChildren(cocoment);
+        commentRepository.save(parent);
+
+        return CommentMessageResponse.builder().message("대댓글이 등록되었습니다.").build();
     }
 
     @Override

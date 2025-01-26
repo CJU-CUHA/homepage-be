@@ -104,7 +104,8 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Page<BoardResponse> getBoardsPage(int page,int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return boardRepository.findAll(pageable).map(x->BoardResponse.builder().id(x.getId())
+        return boardRepository.findAll(pageable).map(x->BoardResponse.builder()
+                .id(x.getId())
                 .author(x.getAuthor().getUsername())
                 .title(x.getTitle())
                 .content(x.getContent())

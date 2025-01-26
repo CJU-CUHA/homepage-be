@@ -5,6 +5,10 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -25,4 +29,18 @@ public class Comment {
     private String comment;
     @CreatedDate
     private LocalDateTime created_at;
+
+    // 대댓글 - 부모 댓글
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    // 대댓글 - 자식 댓글들
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    private List<Comment> children = new ArrayList<>();
+
+    public void setChildren(Comment children) {
+        this.children.add(children);
+    }
+
 }
