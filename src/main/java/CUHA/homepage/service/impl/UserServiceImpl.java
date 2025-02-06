@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -83,29 +86,44 @@ public class UserServiceImpl implements UserService {
                 .message("유저 검색에 성공했습니다.").build();
     }
 
+//
+
     @Override
-    public UserLoginResponse loginUser(UserLoginRequest user) {
+    public UserLoginResponse loginUser(UserLoginRequest user, HttpServletRequest request) {
         Optional<User> loginUser = userRepository.findByUsername(user.getUsername());
-        if(loginUser.isEmpty()){
+        if (loginUser.isEmpty()) {
             return UserLoginResponse.builder()
                     .message("로그인 실패")
                     .success(false)
                     .build();
         }
-        User userInfo= loginUser.get();
-        if(passwordEncoder.matches(user.getPassword(),userInfo.getPassword())&& userInfo.getUsername().equals(user.getUsername())){
+
+        User userInfo = loginUser.get();
+        if (passwordEncoder.matches(user.getPassword(), userInfo.getPassword()) && userInfo.getUsername().equals(user.getUsername())) {
+            // Spring Security 인증 객체 생성
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userInfo.getUsername(), null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + userInfo.getUserRole())));
+
+            // SecurityContextHolder에 인증 정보 저장
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // 세션에 SecurityContext 저장
+            HttpSession session = request.getSession(true);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
             return UserLoginResponse.builder()
                     .message("로그인 성공")
                     .success(true)
                     .build();
-        }
-        else{
+        } else {
             return UserLoginResponse.builder()
                     .message("로그인 실패")
                     .success(false)
                     .build();
         }
     }
+
 
     @Override
     public List<UserFindResponse> getUsers() {
