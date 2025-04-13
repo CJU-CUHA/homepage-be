@@ -33,9 +33,4 @@ public class APIController {
                                    @RequestParam(value="size", defaultValue = "10") int size) throws IOException {
         return ResponseEntity.ok().body(newsService.findGeekNews(page,size));
     }
-
-
-
-
-
 }

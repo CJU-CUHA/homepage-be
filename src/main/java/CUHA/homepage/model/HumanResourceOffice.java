@@ -28,7 +28,4 @@ public class HumanResourceOffice {
     private User resource;
 
     private LocalDateTime created_at;
-
-
-
 }

@@ -21,10 +21,11 @@ public class BoardController {
         return ResponseEntity.ok().body(boardService.addBoard(request,boardRequest));
     }
 
-//    @GetMapping("/api/board")
-//    public ResponseEntity<BoardResponse> getBoard(@RequestParam Long id) {
-//        return ResponseEntity.ok().body(boardService.getBoard(id));
-//    }
+    @GetMapping("/api/board/1")
+    public ResponseEntity<BoardResponse> getBoard(@RequestParam Long id) {
+        return ResponseEntity.ok().body(boardService.getBoard(id));
+    }
+
 
     @GetMapping("/api/board")
     public ResponseEntity<Page<BoardResponse>> getBoards(@RequestParam int page,@RequestParam int size, String username) {
@@ -45,8 +46,4 @@ public class BoardController {
     public ResponseEntity<BoardmessageResponse> deleteBoard(@RequestParam Long id, HttpServletRequest request) {
         return ResponseEntity.ok().body(boardService.deleteBoard(id,request));
     }
-
-
-
-
 }

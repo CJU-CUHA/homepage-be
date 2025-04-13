@@ -19,6 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import static org.springframework.http.HttpMethod.*;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -32,9 +34,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/api","/home","/swagger-ui.html","/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasAnyRole(UserRole.admin.name(), UserRole.staff.name())
+                        .anyRequest().permitAll());//캌퉤
                         .requestMatchers("/api/admin").hasAnyRole("admin", "staff")
                         // 로그인된 사용자만 게시글 작성, 수정, 삭제
                         .requestMatchers(POST,"/api/board").hasAnyRole("admin", "staff", "user")
@@ -59,6 +64,20 @@ public class SecurityConfiguration {
     @Bean
     public String passwordDecoder(){
         return new BCryptPasswordEncoder().encode("password");
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("*")); // 또는 특정 origin 리스트
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 
     
