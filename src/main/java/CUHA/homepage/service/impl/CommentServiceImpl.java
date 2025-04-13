@@ -1,17 +1,14 @@
 package CUHA.homepage.service.impl;
 
-import CUHA.homepage.model.Board;
 import CUHA.homepage.model.Comment;
 import CUHA.homepage.repository.BoardRepository;
 import CUHA.homepage.repository.CommentRepository;
 import CUHA.homepage.repository.UserRepository;
-import CUHA.homepage.security.dto.boardDTO.BoardmessageResponse;
-import CUHA.homepage.security.dto.commentDTO.AllCommentsResponse;
+
 import CUHA.homepage.security.dto.commentDTO.CommentMessageResponse;
 import CUHA.homepage.security.dto.commentDTO.CommentRequest;
 import CUHA.homepage.security.dto.commentDTO.CommentResponse;
 import CUHA.homepage.service.CommentService;
-import CUHA.homepage.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

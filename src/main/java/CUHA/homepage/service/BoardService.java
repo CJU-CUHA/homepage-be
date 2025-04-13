@@ -13,7 +13,7 @@ public interface BoardService {
     BoardmessageResponse deleteBoard(Long id, HttpServletRequest request);
     BoardmessageResponse updateBoard(BoardFindRequest boardFindRequest, HttpServletRequest request);
     List<BoardResponse> getBoards();
-
+    Page<BoardResponse> getBoardsPageByTitle(int page, int size, String title);
     Page<BoardResponse> getBoardsPage(int page,int size);
     Page<BoardResponse> getBoardsPageByAuthor(int page,int size,String author);
 
