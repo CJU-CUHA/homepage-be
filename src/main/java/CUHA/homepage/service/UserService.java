@@ -13,7 +13,8 @@ public interface UserService {
     UserRUDResponse updateUser(UserjoinRequest user);
     UserRUDResponse deleteUser(UserRUDRequest user);
     UserFindResponse getUser(String username);
-    UserLoginResponse loginUser(UserLoginRequest user);
+//    UserLoginResponse loginUser(UserLoginRequest user);
+    UserLoginResponse loginUser(UserLoginRequest user, HttpServletRequest request);
     List<UserFindResponse> getUsers();
     Page<UserFindResponse> getUsers(int page, int size);
 //    UserRUDResponse deactivateUser(HttpServletRequest req);

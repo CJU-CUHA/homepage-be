@@ -26,6 +26,7 @@ public class BoardController {
         return ResponseEntity.ok().body(boardService.getBoard(id));
     }
 
+
     @GetMapping("/api/board")
     public ResponseEntity<Page<BoardResponse>> getBoards(@RequestParam int page,@RequestParam int size, String username) {
         return ResponseEntity.ok().body(boardService.getBoardsPageByAuthor(page,size,username));

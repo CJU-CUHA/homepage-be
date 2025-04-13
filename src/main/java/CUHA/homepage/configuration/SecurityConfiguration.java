@@ -1,6 +1,8 @@
 package CUHA.homepage.configuration;
 
 import CUHA.homepage.model.UserRole;
+import CUHA.homepage.repository.UserRepository;
+import CUHA.homepage.security.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,15 +10,27 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static org.springframework.http.HttpMethod.*;
 
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+    //////
+
+    @Bean
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
+        return new CustomUserDetailsService(userRepository);
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -26,7 +40,18 @@ public class SecurityConfiguration {
                         .requestMatchers("/api","/home","/swagger-ui.html","/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAnyRole(UserRole.admin.name(), UserRole.staff.name())
                         .anyRequest().permitAll());//캌퉤
-
+                        .requestMatchers("/api/admin").hasAnyRole("admin", "staff")
+                        // 로그인된 사용자만 게시글 작성, 수정, 삭제
+                        .requestMatchers(POST,"/api/board").hasAnyRole("admin", "staff", "user")
+                        .requestMatchers(PUT,"/api/board").hasAnyRole("admin", "staff", "user")
+                        .requestMatchers(DELETE,"/api/board").hasAnyRole("admin", "staff", "user")
+                        // 로그인된 사용자만 댓글 작성, 수정, 삭제
+                        .requestMatchers(POST,"/api/comment").hasAnyRole("admin", "staff", "user")
+                        .requestMatchers(POST,"/api/cocomment").hasAnyRole("admin", "staff", "user")
+                        .requestMatchers(PUT,"/api/comment").hasAnyRole("admin", "staff", "user")
+                        .requestMatchers(DELETE,"/api/comment").hasAnyRole("admin", "staff", "user")
+                        .anyRequest().permitAll())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
 
         return http.build();
     }

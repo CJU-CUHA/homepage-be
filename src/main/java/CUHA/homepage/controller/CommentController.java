@@ -1,6 +1,7 @@
 package CUHA.homepage.controller;
 
 import CUHA.homepage.model.Comment;
+import CUHA.homepage.security.dto.commentDTO.CocommentRequest;
 import CUHA.homepage.security.dto.commentDTO.CommentMessageResponse;
 import CUHA.homepage.security.dto.commentDTO.CommentRequest;
 import CUHA.homepage.security.dto.commentDTO.CommentResponse;
@@ -25,19 +26,24 @@ public class CommentController {
         return ResponseEntity.ok().body(commentService.addComment(commentRequest,request));
     }
 
+    @PostMapping("/api/cocomment")
+    public ResponseEntity<CommentMessageResponse> addCocomment(@RequestBody CocommentRequest cocommentRequest, HttpServletRequest request) {
+        return ResponseEntity.ok().body(commentService.addCocomment(cocommentRequest,request));//
+    }
+
     @GetMapping("/api/comments")
-    public ResponseEntity<Page<CommentResponse>> getCommentByBoard(@RequestParam Long id, @RequestParam int page, @RequestParam int size) {
-        return ResponseEntity.ok().body(commentService.getCommentsByBoard_Id(id,page,size));
+    public ResponseEntity<Page<CommentResponse>> getCommentByBoard(@RequestParam Long boardId, @RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok().body(commentService.getCommentsByBoard_Id(boardId,page,size));
     }
 
     @PutMapping("/api/comment")
-    public ResponseEntity<CommentMessageResponse> updateComment(@RequestBody CommentRequest commentRequest, HttpServletRequest request) {
-        return null;
+    public ResponseEntity<CommentMessageResponse> updateComment(@RequestParam Long commentId, CommentRequest commentRequest, HttpServletRequest request) {
+        return ResponseEntity.ok(commentService.updateComment(commentId, commentRequest, request));
     }
 
     @DeleteMapping("/api/comment")
-    public ResponseEntity<CommentMessageResponse> deleteComment(@RequestBody CommentRequest commentRequest, HttpServletRequest request) {
-        return null;
+    public ResponseEntity<CommentMessageResponse> deleteComment(@RequestBody Long commentId, HttpServletRequest request) {
+        return ResponseEntity.ok(commentService.deleteComment(commentId, request));
     }
 
 

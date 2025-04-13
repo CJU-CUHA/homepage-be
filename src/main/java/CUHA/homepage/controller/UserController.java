@@ -21,19 +21,20 @@ public class UserController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return ResponseEntity.ok().body(userService.addUser(user));
     }
+
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest user, HttpServletRequest request) {
-
-        UserLoginResponse loginUser=userService.loginUser(user);
-        if(loginUser.isSuccess()==true){
+        UserLoginResponse loginUser = userService.loginUser(user, request);
+        if (loginUser.isSuccess()) {
             request.getSession().setAttribute("user", user.getUsername());
-            //session이름 jsessionid를 사용함
+            // session이름 jsessionid를 사용함
             return ResponseEntity.ok().body(loginUser);
         }
-        else{
+        else {
             return ResponseEntity.ok().body(loginUser);
         }
     }
+
     @PutMapping("/set/userinfo")
     public ResponseEntity<UserRUDResponse> updateuser(@RequestBody UserjoinRequest username){
         username.setPassword(username.getPassword());
