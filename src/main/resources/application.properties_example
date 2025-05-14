@@ -1,0 +1,23 @@
+spring.application.name=homepage
+#swagger
+springdoc.swagger-ui.tagsSorter=alpha
+springdoc.swagger-ui.operationsSorter=method
+
+#DB
+spring.datasource.url=jdbc:mysql://localhost:3306/db_name
+spring.datasource.username=root
+spring.datasource.password=
+#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=true
+spring.jpa.defer-datasource-initialization=true
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+#session-?? ??? ???? ?? ??? ?? ???.
+server.servlet.session.timeout=3600
+
+
+logging.level.org.apache.coyote.http11=DEBUG
+
