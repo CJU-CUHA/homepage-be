@@ -54,7 +54,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardMessageResponseDto updateBoard(BoardFindRequestDto boardFindRequestDto) {
         Optional<Board> board = boardRepository.findById(boardFindRequestDto.getId());
-        if(!board.isPresent()) {
+        if(board.isEmpty()) {
             return BoardMessageResponseDto.builder()
                     .message("존재하지 않는 게시물입니다.")
                     .build();
@@ -75,7 +75,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardMessageResponseDto deleteBoard(Long id) {
         Optional<Board> board = boardRepository.findById(id);
-        if(!board.isPresent()) {
+        if(board.isEmpty()) {
             return BoardMessageResponseDto.builder()
                     .message("존재하지 않는 게시물입니다.")
                     .build();
