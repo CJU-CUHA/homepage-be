@@ -1,4 +1,4 @@
-package CUHA.homepage.board.security.dto;
+package CUHA.homepage.security.dto;
 
 import lombok.*;
 

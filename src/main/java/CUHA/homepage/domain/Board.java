@@ -1,4 +1,4 @@
-package CUHA.homepage.board;
+package CUHA.homepage.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
