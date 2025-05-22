@@ -1,10 +1,11 @@
-package CUHA.homepage.service;
+package CUHA.homepage.service.impl;
 
 import CUHA.homepage.domain.Board;
 import CUHA.homepage.repository.BoardRepository;
 import CUHA.homepage.security.dto.BoardRequestDto;
 import CUHA.homepage.security.dto.BoardResponseDto;
 import CUHA.homepage.exception.BoardNotFoundException;
+import CUHA.homepage.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
