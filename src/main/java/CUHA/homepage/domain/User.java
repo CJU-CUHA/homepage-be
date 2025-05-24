@@ -19,6 +19,8 @@ public class User {
     private String username;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
     private Long score;
     private String password;
     private boolean isActive;
