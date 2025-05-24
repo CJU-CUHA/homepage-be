@@ -1,0 +1,22 @@
+package CUHA.homepage.calendar.domain;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@Setter
+@Getter
+public class ScheduleResponseDto {
+    private List<Schedule> task;
+    private Schedule schedule;
+
+    public ScheduleResponseDto(List<Schedule> task) {
+        this.task = task;
+    }
+
+    public ScheduleResponseDto(Schedule schedule) {
+        this.schedule = schedule;
+    }
+
+}
