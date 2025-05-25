@@ -8,12 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JWTUtil {
 
-    private final SecretKey key;
+    private final Key key;
 
     public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
         if (secret == null || secret.length() < 32) {
