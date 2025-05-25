@@ -1,4 +1,4 @@
-package CUHA.homepage.calendar.service;
+package CUHA.homepage.service;
 
 import CUHA.homepage.domain.Schedule;
 import CUHA.homepage.domain.ScheduleRequestDto;

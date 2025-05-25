@@ -1,4 +1,4 @@
-package CUHA.homepage.calendar.repository;
+package CUHA.homepage.repository;
 
 import CUHA.homepage.domain.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,10 +1,10 @@
-package CUHA.homepage.calendar.service.impl;
+package CUHA.homepage.service.impl;
 
 import CUHA.homepage.domain.Schedule;
 import CUHA.homepage.domain.ScheduleRequestDto;
-import CUHA.homepage.calendar.repository.ScheduleRepository;
-import CUHA.homepage.calendar.service.ScheduleService;
-import CUHA.homepage.calendar.util.Title;
+import CUHA.homepage.repository.ScheduleRepository;
+import CUHA.homepage.service.ScheduleService;
+import CUHA.homepage.domain.Title;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

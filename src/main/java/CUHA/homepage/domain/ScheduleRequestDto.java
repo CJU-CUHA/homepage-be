@@ -1,6 +1,5 @@
-package CUHA.homepage.calendar.domain;
+package CUHA.homepage.domain;
 
-import CUHA.homepage.calendar.util.Title;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

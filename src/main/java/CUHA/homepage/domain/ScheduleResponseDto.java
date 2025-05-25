@@ -1,4 +1,4 @@
-package CUHA.homepage.calendar.domain;
+package CUHA.homepage.domain;
 
 import lombok.Getter;
 import lombok.Setter;
