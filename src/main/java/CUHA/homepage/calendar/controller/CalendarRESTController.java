@@ -12,6 +12,9 @@ import java.util.Map;
 
 // http://localhost:8080/api/calendar?year=2025&month=5
 
+// 달력 불러오기는 기능만 구현
+// 전체적인 코드 수정 예정
+
 @RestController
 @RequestMapping("/api/calendar")
 @RequiredArgsConstructor

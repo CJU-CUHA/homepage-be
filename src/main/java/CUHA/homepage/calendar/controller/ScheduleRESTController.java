@@ -26,6 +26,7 @@ public class ScheduleRESTController {
         }
     }
 
+    // 나머지 기능 구현 후 구현 예정
     @GetMapping("/all")
     public ScheduleResponseDto getAllScheduleData() {
         return null;
