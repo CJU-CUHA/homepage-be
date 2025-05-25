@@ -1,7 +1,7 @@
 package CUHA.homepage.service.impl;
 
 import CUHA.homepage.domain.Schedule;
-import CUHA.homepage.domain.ScheduleRequestDto;
+import CUHA.homepage.security.dto.ScheduleRequestDto;
 import CUHA.homepage.repository.ScheduleRepository;
 import CUHA.homepage.service.ScheduleService;
 import CUHA.homepage.domain.Title;

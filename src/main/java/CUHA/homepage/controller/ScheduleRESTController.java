@@ -1,7 +1,7 @@
 package CUHA.homepage.controller;
 
-import CUHA.homepage.domain.ScheduleRequestDto;
-import CUHA.homepage.domain.ScheduleResponseDto;
+import CUHA.homepage.security.dto.ScheduleRequestDto;
+import CUHA.homepage.security.dto.ScheduleResponseDto;
 import CUHA.homepage.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

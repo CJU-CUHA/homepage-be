@@ -1,7 +1,7 @@
 package CUHA.homepage.service;
 
 import CUHA.homepage.domain.Schedule;
-import CUHA.homepage.domain.ScheduleRequestDto;
+import CUHA.homepage.security.dto.ScheduleRequestDto;
 
 import java.util.List;
 

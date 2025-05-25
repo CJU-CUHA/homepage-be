@@ -1,5 +1,6 @@
-package CUHA.homepage.domain;
+package CUHA.homepage.security.dto;
 
+import CUHA.homepage.domain.Title;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

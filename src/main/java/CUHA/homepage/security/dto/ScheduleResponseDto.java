@@ -1,5 +1,6 @@
-package CUHA.homepage.domain;
+package CUHA.homepage.security.dto;
 
+import CUHA.homepage.domain.Schedule;
 import lombok.Getter;
 import lombok.Setter;
 
