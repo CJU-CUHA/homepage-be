@@ -16,7 +16,7 @@ public class JWTUtil {
 
     private final Key key;
 
-    public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
+    public JWTUtil(@Value("${jwt.secret}") String secret) {
         if (secret == null || secret.length() < 32) {
             throw new IllegalArgumentException("JWT secret key must be at least 256 bits (32 bytes)");
         }
