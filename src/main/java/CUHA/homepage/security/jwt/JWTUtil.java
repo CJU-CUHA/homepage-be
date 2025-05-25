@@ -2,70 +2,60 @@ package CUHA.homepage.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JWTUtil {
 
-    private final SecretKey secretKey;  // JWT 서명에 사용할 비밀 키
+    private final SecretKey key;
 
-    // 생성자에서 secret 키를 받아 SecretKey 객체를 초기화
     public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
-        // 주입된 secret 값을 기반으로 HMAC-SHA 알고리즘에 맞는 서명용 키를 생성
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        if (secret == null || secret.length() < 32) {
+            throw new IllegalArgumentException("JWT secret key must be at least 256 bits (32 bytes)");
+        }
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // JWT 생성 메서드
-    public String createJWT(String username, String role, Long expiredMs) {
-        return Jwts.builder()  // JWT를 빌드하기 위한 객체 생성
-                .setSubject(username)  // JWT의 subject(주제)에 username을 설정
-                .claim("role", role)  // JWT에 "role"이라는 이름으로 역할을 클레임에 추가
-                .setIssuedAt(new Date())  // 발행 시간을 현재 시간으로 설정
-                .setExpiration(new Date(System.currentTimeMillis() + expiredMs))  // 만료 시간을 설정 (현재 시간 + 유효 기간)
-                .compact();  // JWT 문자열을 생성하여 반환
+    // JWT 생성
+    public String createJWT(String username, String role, long expiredMs) {
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
+                .signWith(key)       // ← 서명 추가!
+                .compact();
     }
 
-    // JWT에서 username을 추출하는 메서드
+    // 토큰에서 Claims 파싱 (중복 제거)
+    private Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    // username 추출
     public String getUsername(String token) {
-        // 토큰을 파싱하여 Claims 객체를 얻은 후, subject에서 username을 추출
-        Claims claims = Jwts.parserBuilder()  // JWT 파싱을 위한 빌더 생성
-                .setSigningKey(secretKey)  // 서명 검증을 위한 비밀 키 설정
-                .build()  // 빌더 완료
-                .parseClaimsJws(token)  // 토큰을 파싱하여 JWT Claims 객체로 변환
-                .getBody();  // Claims의 payload 부분을 가져옴
-
-        return claims.getSubject();  // JWT의 subject에서 username을 반환
+        return parseClaims(token).getSubject();
     }
 
-    // JWT에서 role을 추출하는 메서드
+    // role 추출
     public String getRole(String token) {
-        // JWT 파싱 후 role 클레임을 추출하여 반환
-        Claims claims = Jwts.parserBuilder()  // JWT 파싱을 위한 빌더 생성
-                .setSigningKey(secretKey)  // 서명 검증을 위한 비밀 키 설정
-                .build()  // 빌더 완료
-                .parseClaimsJws(token)  // 토큰을 파싱하여 JWT Claims 객체로 변환
-                .getBody();  // Claims의 payload 부분을 가져옴
-
-        return claims.get("role").toString();  // role 클레임을 반환
+        return parseClaims(token).get("role", String.class);
     }
 
-    // JWT가 만료되었는지 확인하는 메서드
+    // 만료 여부 확인
     public boolean isExpired(String token) {
-        // 토큰을 파싱하여 Claims 객체를 얻은 후, 만료 시간을 추출하여 현재 시간과 비교
-        Claims claims = Jwts.parserBuilder()  // JWT 파싱을 위한 빌더 생성
-                .setSigningKey(secretKey)  // 서명 검증을 위한 비밀 키 설정
-                .build()  // 빌더 완료
-                .parseClaimsJws(token)  // 토큰을 파싱하여 JWT Claims 객체로 변환
-                .getBody();  // Claims의 payload 부분을 가져옴
-
-        Date expiration = claims.getExpiration();  // 만료 시간 추출
-        return expiration.before(new Date());  // 만료 시간이 현재 시간보다 이전이면 만료됨
+        return parseClaims(token)
+                .getExpiration()
+                .before(new Date());
     }
 }
