@@ -2,77 +2,12 @@ package CUHA.homepage.calendar.service;
 
 import CUHA.homepage.calendar.domain.Schedule;
 import CUHA.homepage.calendar.domain.ScheduleRequestDto;
-import CUHA.homepage.calendar.repository.ScheduleRepository;
-import CUHA.homepage.calendar.util.Title;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class ScheduleService {
-
-    private final ScheduleRepository scheduleRepository;
-
-    public List<Schedule> getSchedule(int year, int month) {
-        YearMonth yearMonth = YearMonth.of(year, month);
-        LocalDate startDate = yearMonth.atDay(1);
-        LocalDate endDate = yearMonth.atEndOfMonth();
-
-        return scheduleRepository.findByDateBetween(startDate, endDate);
-    }
-
-    public Schedule addSchedule(ScheduleRequestDto scheduleRequestDto) {
-        LocalDate date = scheduleRequestDto.getDate();
-        Title title = scheduleRequestDto.getTitle();
-        String subtitle = scheduleRequestDto.getSubtitle();
-        Long userId = scheduleRequestDto.getUserId();
-
-        Schedule schedule = Schedule.builder()
-                .date(date)
-                .title(title)
-                .subtitle(subtitle)
-                .userId(userId)
-                .build();
-
-        return scheduleRepository.save(schedule);
-    }
-
-    public Schedule updateSchedule(ScheduleRequestDto scheduleRequestDto) {
-        Long id = scheduleRequestDto.getId();
-
-        // 임시 예외생성
-        Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
-
-        if (scheduleRequestDto.getDate() != null) {
-            schedule.setDate(scheduleRequestDto.getDate());
-        }
-        if (scheduleRequestDto.getTitle() != null) {
-            schedule.setTitle(scheduleRequestDto.getTitle());
-        }
-        if (scheduleRequestDto.getSubtitle() != null) {
-            schedule.setSubtitle(scheduleRequestDto.getSubtitle());
-        }
-        if (scheduleRequestDto.getUserId() != null) {
-            schedule.setUserId(scheduleRequestDto.getUserId());
-        }
-
-        return scheduleRepository.save(schedule);
-    }
-
-    public Schedule deleteSchedule(ScheduleRequestDto scheduleRequestDto) {
-        Long id = scheduleRequestDto.getId();
-
-        // 임시 예외생성
-        Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
-
-        scheduleRepository.delete(schedule);
-
-        return schedule;
-    }
+public interface ScheduleService {
+    List<Schedule> getSchedule(int year, int month);
+    Schedule addSchedule(ScheduleRequestDto scheduleRequestDto);
+    Schedule updateSchedule(ScheduleRequestDto scheduleRequestDto);
+    Schedule deleteSchedule(ScheduleRequestDto scheduleRequestDto);
 }
