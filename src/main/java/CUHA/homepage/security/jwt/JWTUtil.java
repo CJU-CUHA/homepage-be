@@ -2,6 +2,7 @@ package CUHA.homepage.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    private SecretKey secretKey;  // JWT 서명에 사용할 비밀 키
+    private final SecretKey secretKey;  // JWT 서명에 사용할 비밀 키
 
     // 생성자에서 secret 키를 받아 SecretKey 객체를 초기화
     public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
