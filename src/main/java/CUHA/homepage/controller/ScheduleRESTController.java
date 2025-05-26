@@ -32,7 +32,7 @@ public class ScheduleRESTController {
         return null;
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<?> createSchedule(@RequestBody ScheduleRequestDto dto) {
         try {
             ScheduleResponseDto response = new ScheduleResponseDto(scheduleService.addSchedule(dto));
@@ -43,7 +43,7 @@ public class ScheduleRESTController {
         }
     }
 
-    @PutMapping("/update")
+    @PutMapping
     public ResponseEntity<?> updateSchedule(@RequestBody ScheduleRequestDto dto) {
         try {
             ScheduleResponseDto response = new ScheduleResponseDto(scheduleService.updateSchedule(dto));
@@ -54,7 +54,7 @@ public class ScheduleRESTController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<?> deleteSchedule(@RequestBody ScheduleRequestDto dto) {
         try {
             ScheduleResponseDto response = new ScheduleResponseDto(scheduleService.deleteSchedule(dto));
