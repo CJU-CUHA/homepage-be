@@ -1,5 +1,6 @@
 package CUHA.homepage.controller;
 
+import CUHA.homepage.domain.Title;
 import CUHA.homepage.security.dto.ScheduleRequestDto;
 import CUHA.homepage.security.dto.ScheduleResponseDto;
 import CUHA.homepage.service.ScheduleService;
@@ -8,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/schedule")
 @RequiredArgsConstructor
@@ -15,10 +19,21 @@ public class ScheduleRESTController {
 
     private final ScheduleService scheduleService;
 
-    @GetMapping()
-    public ResponseEntity<?> getScheduleData(@RequestParam int year, @RequestParam int month) {
+    @GetMapping("/list")
+    public ResponseEntity<?> getScheduleList(@RequestParam int year, @RequestParam int month) {
         try {
             ScheduleResponseDto response = new ScheduleResponseDto(scheduleService.getSchedule(year, month));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                    .body("일정 데이터를 불러오는 중 오류가 발생했습니다.");
+        }
+    }
+
+    @GetMapping()
+    public ResponseEntity<?> getSchedule(@RequestParam LocalDate date) {
+        try {
+            ScheduleResponseDto response = new ScheduleResponseDto(scheduleService.getSchedule(date));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
@@ -63,5 +78,10 @@ public class ScheduleRESTController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
                     .body("일정 데이터를 삭제하는 중 오류가 발생했습니다.");
         }
+    }
+
+    @GetMapping("/title")
+    public Title[] getTitleData() {
+        return Title.values();
     }
 }

@@ -28,6 +28,12 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public Schedule getSchedule(LocalDate date) {
+
+        return scheduleRepository.findByDate(date);
+    }
+
+    @Override
     public Schedule addSchedule(ScheduleRequestDto scheduleRequestDto) {
         LocalDate date = scheduleRequestDto.getDate();
         Title title = scheduleRequestDto.getTitle();
