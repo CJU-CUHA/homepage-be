@@ -30,8 +30,8 @@ public class ScheduleRESTController {
         }
     }
 
-    @GetMapping()
-    public ResponseEntity<?> getSchedule(@RequestParam LocalDate date) {
+    @GetMapping("/{date}")
+    public ResponseEntity<?> getSchedule(@PathVariable LocalDate date) {
         try {
             ScheduleResponseDto response = new ScheduleResponseDto(scheduleService.getSchedule(date));
             return ResponseEntity.ok(response);

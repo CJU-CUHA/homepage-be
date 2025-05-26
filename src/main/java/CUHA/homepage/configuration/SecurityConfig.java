@@ -50,7 +50,7 @@ public class SecurityConfig {
 
         // 경로별 접근 권한 설정
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/login", "/", "/join").permitAll()  // /login, /, /join 경로는 모든 사용자에게 허용
+                .requestMatchers("/login", "/", "/join","/api/schedule", "/api/schedule/{date}").permitAll()  // /login, /, /join 경로는 모든 사용자에게 허용
                 .anyRequest().authenticated());  // 나머지 모든 요청은 인증된 사용자만 접근 가능
 
         // 세션 관리 설정: Stateless로 설정하여 세션을 사용하지 않도록 합니다.
