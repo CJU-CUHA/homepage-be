@@ -61,7 +61,7 @@ public class SecurityConfig {
                         "/swagger-resources/**",
                         "/swagger-ui.html",
                         "/webjars/**").permitAll()  // /login, /, /join 경로는 모든 사용자에게 허용
-                .anyRequest().authenticated());  // 나머지 모든 요청은 인증된 사용자만 접근 가능
+                .anyRequest().permitAll());  // 나머지 모든 요청은 인증된 사용자만 접근 가능
 
         // 세션 관리 설정: Stateless로 설정하여 세션을 사용하지 않도록 합니다.
         // JWT 인증 방식에서 세션을 사용하지 않도록 하기 위해 STATELESS로 설정합니다.
