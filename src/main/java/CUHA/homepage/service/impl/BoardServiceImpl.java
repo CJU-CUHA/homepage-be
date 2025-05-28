@@ -12,6 +12,10 @@ import CUHA.homepage.exception.BoardNotFoundException;
 import CUHA.homepage.security.jwt.JWTUtil;
 import CUHA.homepage.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -137,10 +141,38 @@ public class BoardServiceImpl implements BoardService {
     public List<BoardResponseDto> getBoards() {
         List<Board> boardList = boardRepository.findAll();
 
-        List<BoardResponseDto> boardResponseDtoList = new ArrayList<>();
-        for (Board board : boardList) {
-            boardResponseDtoList.add(getBoard(board.getId()));
-        }
-        return boardResponseDtoList;
+        return boardList.stream().map(BoardResponseDto::from).toList();
+    }
+
+    @Override
+    public Page<BoardResponseDto> getBoards(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Board> boards = boardRepository.findAll(pageable);
+
+        return boards.map(BoardResponseDto::from);
+    }
+
+    @Override
+    public Page<BoardResponseDto> getBoardsByAuthor(Long author, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Board> boards = boardRepository.findByAuthor(author, pageable);
+
+        return boards.map(BoardResponseDto::from);
+    }
+
+    @Override
+    public Page<BoardResponseDto> getBoardsByTitle(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Board> boards = boardRepository.findByTitleContaining(keyword, pageable);
+
+        return boards.map(BoardResponseDto::from);
+    }
+
+    @Override
+    public Page<BoardResponseDto> getBoardsByContent(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Board> boards = boardRepository.findByContentContaining(keyword, pageable);
+
+        return boards.map(BoardResponseDto::from);
     }
 }
