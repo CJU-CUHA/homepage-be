@@ -39,12 +39,7 @@ public class BoardController {
             @RequestHeader(value = "Authorization", required = false) String token
     ) {
 
-        // JWT 토큰에서 "Bearer " 접두어 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
-        return ResponseEntity.ok(boardService.getBoard(id, token));
+        return ResponseEntity.ok(boardService.getBoard(id, resolveToken(token)));
     }
 
     @PutMapping("/{id}")
@@ -53,12 +48,7 @@ public class BoardController {
             @RequestBody BoardRequestDto boardRequestDto,
             @RequestHeader(value = "Authorization") String token) {
 
-        // JWT 토큰에서 "Bearer " 접두어 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
-        return ResponseEntity.ok(boardService.updateBoard(id, boardRequestDto, token));
+        return ResponseEntity.ok(boardService.updateBoard(id, boardRequestDto, resolveToken(token)));
     }
 
     @DeleteMapping("/{id}")
@@ -66,12 +56,7 @@ public class BoardController {
             @PathVariable Long id,
             @RequestHeader(value = "Authorization") String token) {
 
-        // JWT 토큰에서 "Bearer " 접두어 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
-        boardService.deleteBoard(id, token);
+        boardService.deleteBoard(id, resolveToken(token));
         return ResponseEntity.noContent().build();
     }
 
@@ -80,12 +65,8 @@ public class BoardController {
             @RequestParam(defaultValue = "0") int page,
             @RequestHeader(value = "Authorization", required = false) String token
     ) {
-        // JWT 토큰에서 "Bearer " 접두어 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
 
-        return ResponseEntity.ok(boardService.getBoards(page, token));
+        return ResponseEntity.ok(boardService.getBoards(page, resolveToken(token)));
     }
     @GetMapping("/author/{authorId}")
     public ResponseEntity<Page<BoardResponseDto>> getBoardsByAuthor(
@@ -93,12 +74,8 @@ public class BoardController {
             @RequestParam(defaultValue = "0") int page,
             @RequestHeader(value = "Authorization", required = false) String token
     ) {
-        // JWT 토큰에서 "Bearer " 접두어 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
 
-        return ResponseEntity.ok(boardService.getBoardsByAuthor(authorId, page, token));
+        return ResponseEntity.ok(boardService.getBoardsByAuthor(authorId, page, resolveToken(token)));
     }
 
     // 제목 검색
@@ -108,12 +85,8 @@ public class BoardController {
             @RequestParam(defaultValue = "0") int page,
             @RequestHeader(value = "Authorization", required = false) String token
     ) {
-        // JWT 토큰에서 "Bearer " 접두어 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
 
-        return ResponseEntity.ok(boardService.getBoardsByTitle(keyword, page, token));
+        return ResponseEntity.ok(boardService.getBoardsByTitle(keyword, page, resolveToken(token)));
     }
 
     // 내용 검색
@@ -123,12 +96,8 @@ public class BoardController {
             @RequestParam(defaultValue = "0") int page,
             @RequestHeader(value = "Authorization", required = false) String token
     ) {
-        // JWT 토큰에서 "Bearer " 접두어 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
 
-        return ResponseEntity.ok(boardService.getBoardsByContent(keyword, page, token));
+        return ResponseEntity.ok(boardService.getBoardsByContent(keyword, page, resolveToken(token)));
     }
 
     @PostMapping("/reaction")
@@ -136,12 +105,8 @@ public class BoardController {
             @RequestBody BoardReactionRequestDto boardReactionRequestDto,
             @RequestHeader(value = "Authorization") String token
     ) {
-        // JWT 토큰에서 "Bearer " 접두어 제거
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
 
-        BoardReactionResponseDto response = boardService.reactToBoard(boardReactionRequestDto, token);
+        BoardReactionResponseDto response = boardService.reactToBoard(boardReactionRequestDto, resolveToken(token));
         return ResponseEntity.ok(response);
     }
 
@@ -164,6 +129,14 @@ public class BoardController {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+
+    private String resolveToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return token;
     }
 }
 
