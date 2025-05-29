@@ -35,9 +35,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardResponseDto createBoard(BoardRequestDto boardRequestDto) {
+        Optional<User> userOptional = userRepository.findById(boardRequestDto.getAuthor());
+        if(userOptional.isEmpty()) throw new UserNotFoundException("id: " + boardRequestDto.getAuthor());
+        User user = userOptional.get();
+
+
         Board saveBoard = Board.builder()
                 .title(boardRequestDto.getTitle())
-                .author(boardRequestDto.getAuthor())
+                .author(user)
                 .content(boardRequestDto.getContent())
                 .like(0L)
                 .dislike(0L)
@@ -47,12 +52,7 @@ public class BoardServiceImpl implements BoardService {
 
         boardRepository.save(saveBoard);
 
-        return BoardResponseDto.builder()
-                .id(saveBoard.getId())
-                .title(saveBoard.getTitle())
-                .author(saveBoard.getAuthor())
-                .content(saveBoard.getContent())
-                .build();
+        return BoardResponseDto.from(saveBoard);
     }
 
     @Override
@@ -64,12 +64,7 @@ public class BoardServiceImpl implements BoardService {
 
         Board findBoard = board.get();
 
-        return BoardResponseDto.builder()
-                .id(findBoard.getId())
-                .title(findBoard.getTitle())
-                .content(findBoard.getContent())
-                .author(findBoard.getAuthor())
-                .build();
+        return BoardResponseDto.from(findBoard);
     }
 
     @Override
@@ -98,13 +93,8 @@ public class BoardServiceImpl implements BoardService {
         updateBoard.setTitle(boardRequestDto.getTitle());
         updateBoard.setContent(boardRequestDto.getContent());
         boardRepository.save(updateBoard);
-        return BoardResponseDto.builder()
-                .id(updateBoard.getId())
-                .title(updateBoard.getTitle())
-                .content(updateBoard.getContent())
-                .author(updateBoard.getAuthor())
-                .build();
 
+        return BoardResponseDto.from(updateBoard);
     }
 
     @Override
@@ -134,7 +124,6 @@ public class BoardServiceImpl implements BoardService {
         // Board File 삭제 로직
 
         boardRepository.deleteById(id);
-        return;
     }
 
     @Override

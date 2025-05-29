@@ -17,4 +17,6 @@ public interface BoardService {
     Page<BoardResponseDto> getBoardsByAuthor(Long author, int page, int size);
     Page<BoardResponseDto> getBoardsByTitle(String keyword, int page, int size);
     Page<BoardResponseDto> getBoardsByContent(String keyword, int page, int size);
+
+
 }
