@@ -1,12 +1,22 @@
 package CUHA.homepage.service.impl;
 
 import CUHA.homepage.domain.Board;
+import CUHA.homepage.domain.User;
+import CUHA.homepage.exception.TokenNotFoundException;
+import CUHA.homepage.exception.UserNotFoundException;
 import CUHA.homepage.repository.BoardRepository;
+import CUHA.homepage.repository.UserRepository;
 import CUHA.homepage.security.dto.BoardRequestDto;
 import CUHA.homepage.security.dto.BoardResponseDto;
 import CUHA.homepage.exception.BoardNotFoundException;
+import CUHA.homepage.security.jwt.JWTUtil;
 import CUHA.homepage.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +29,9 @@ import java.util.Optional;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
+    private final JWTUtil jwtUtil;
+
 
     @Override
     public BoardResponseDto createBoard(BoardRequestDto boardRequestDto) {
@@ -60,14 +73,27 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto) {
+    public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto, String token) {
         Optional<Board> board = boardRepository.findById(id);
         if(board.isEmpty()) {
             throw new BoardNotFoundException(id);
         }
-
         Board updateBoard = board.get();
-        // 게시물 소유 확인
+
+        if(token == null) {
+            throw new TokenNotFoundException();
+        }
+
+        String username = jwtUtil.getUsername(token);
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if(userOptional.isEmpty()) {
+            throw new UserNotFoundException(username);
+        }
+        User user = userOptional.get();
+
+        if(!updateBoard.getAuthor().equals(user.getId())) {
+            throw new AccessDeniedException("Access Denied");
+        }
 
         updateBoard.setTitle(boardRequestDto.getTitle());
         updateBoard.setContent(boardRequestDto.getContent());
@@ -82,15 +108,28 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void deleteBoard(Long id) {
+    public void deleteBoard(Long id, String token) {
         Optional<Board> board = boardRepository.findById(id);
         if(board.isEmpty()) {
             throw new BoardNotFoundException(id);
-
         }
 
         Board deleteBoard = board.get();
-        // 게시물 소유 확인
+
+        if(token == null) {
+            throw new TokenNotFoundException();
+        }
+
+        String username = jwtUtil.getUsername(token);
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if(userOptional.isEmpty()) {
+            throw new UserNotFoundException(username);
+        }
+        User user = userOptional.get();
+
+        if(!deleteBoard.getAuthor().equals(user.getId())) {
+            throw new AccessDeniedException("Access Denied");
+        }
 
         // Board File 삭제 로직
 
@@ -102,10 +141,38 @@ public class BoardServiceImpl implements BoardService {
     public List<BoardResponseDto> getBoards() {
         List<Board> boardList = boardRepository.findAll();
 
-        List<BoardResponseDto> boardResponseDtoList = new ArrayList<>();
-        for (Board board : boardList) {
-            boardResponseDtoList.add(getBoard(board.getId()));
-        }
-        return boardResponseDtoList;
+        return boardList.stream().map(BoardResponseDto::from).toList();
+    }
+
+    @Override
+    public Page<BoardResponseDto> getBoards(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Board> boards = boardRepository.findAll(pageable);
+
+        return boards.map(BoardResponseDto::from);
+    }
+
+    @Override
+    public Page<BoardResponseDto> getBoardsByAuthor(Long author, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Board> boards = boardRepository.findByAuthor(author, pageable);
+
+        return boards.map(BoardResponseDto::from);
+    }
+
+    @Override
+    public Page<BoardResponseDto> getBoardsByTitle(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Board> boards = boardRepository.findByTitleContaining(keyword, pageable);
+
+        return boards.map(BoardResponseDto::from);
+    }
+
+    @Override
+    public Page<BoardResponseDto> getBoardsByContent(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Board> boards = boardRepository.findByContentContaining(keyword, pageable);
+
+        return boards.map(BoardResponseDto::from);
     }
 }
