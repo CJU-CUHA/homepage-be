@@ -13,10 +13,10 @@ public interface BoardService {
     void deleteBoard(Long id, String token);
     List<BoardResponseDto> getBoards();
 
-    Page<BoardResponseDto> getBoards(int page, int size);
-    Page<BoardResponseDto> getBoardsByAuthor(Long author, int page, int size);
-    Page<BoardResponseDto> getBoardsByTitle(String keyword, int page, int size);
-    Page<BoardResponseDto> getBoardsByContent(String keyword, int page, int size);
+    Page<BoardResponseDto> getBoards(int page);
+    Page<BoardResponseDto> getBoardsByAuthor(Long author, int page);
+    Page<BoardResponseDto> getBoardsByTitle(String keyword, int page);
+    Page<BoardResponseDto> getBoardsByContent(String keyword, int page);
 
 
 }

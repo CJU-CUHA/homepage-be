@@ -59,34 +59,30 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<Page<BoardResponseDto>> getAllBoards(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(boardService.getBoards(page, size));
+            @RequestParam(defaultValue = "0") int page) {
+        return ResponseEntity.ok(boardService.getBoards(page));
     }
     @GetMapping("/author/{authorId}")
     public ResponseEntity<Page<BoardResponseDto>> getBoardsByAuthor(
             @PathVariable Long authorId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(boardService.getBoardsByAuthor(authorId, page, size));
+            @RequestParam(defaultValue = "0") int page) {
+        return ResponseEntity.ok(boardService.getBoardsByAuthor(authorId, page));
     }
 
     // 제목 검색
     @GetMapping("/search/title")
     public ResponseEntity<Page<BoardResponseDto>> searchByTitle(
             @RequestParam String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(boardService.getBoardsByTitle(keyword, page, size));
+            @RequestParam(defaultValue = "0") int page) {
+        return ResponseEntity.ok(boardService.getBoardsByTitle(keyword, page));
     }
 
     // 내용 검색
     @GetMapping("/search/content")
     public ResponseEntity<Page<BoardResponseDto>> searchByContent(
             @RequestParam String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(boardService.getBoardsByContent(keyword, page, size));
+            @RequestParam(defaultValue = "0") int page) {
+        return ResponseEntity.ok(boardService.getBoardsByContent(keyword, page));
     }
 
     @ExceptionHandler(BoardNotFoundException.class)

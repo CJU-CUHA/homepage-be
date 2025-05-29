@@ -134,32 +134,32 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardResponseDto> getBoards(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+    public Page<BoardResponseDto> getBoards(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findAll(pageable);
 
         return boards.map(BoardResponseDto::from);
     }
 
     @Override
-    public Page<BoardResponseDto> getBoardsByAuthor(Long author, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+    public Page<BoardResponseDto> getBoardsByAuthor(Long author, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findByAuthor(author, pageable);
 
         return boards.map(BoardResponseDto::from);
     }
 
     @Override
-    public Page<BoardResponseDto> getBoardsByTitle(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+    public Page<BoardResponseDto> getBoardsByTitle(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findByTitleContaining(keyword, pageable);
 
         return boards.map(BoardResponseDto::from);
     }
 
     @Override
-    public Page<BoardResponseDto> getBoardsByContent(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+    public Page<BoardResponseDto> getBoardsByContent(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findByContentContaining(keyword, pageable);
 
         return boards.map(BoardResponseDto::from);
