@@ -22,7 +22,7 @@ public class Board {
 
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
     private String content;
