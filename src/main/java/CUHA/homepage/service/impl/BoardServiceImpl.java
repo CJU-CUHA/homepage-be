@@ -1,11 +1,16 @@
 package CUHA.homepage.service.impl;
 
 import CUHA.homepage.domain.Board;
+import CUHA.homepage.domain.BoardReaction;
+import CUHA.homepage.domain.ReactionType;
 import CUHA.homepage.domain.User;
 import CUHA.homepage.exception.TokenNotFoundException;
 import CUHA.homepage.exception.UserNotFoundException;
+import CUHA.homepage.repository.BoardReactionRepository;
 import CUHA.homepage.repository.BoardRepository;
 import CUHA.homepage.repository.UserRepository;
+import CUHA.homepage.security.dto.BoardReactionRequestDto;
+import CUHA.homepage.security.dto.BoardReactionResponseDto;
 import CUHA.homepage.security.dto.BoardRequestDto;
 import CUHA.homepage.security.dto.BoardResponseDto;
 import CUHA.homepage.exception.BoardNotFoundException;
@@ -30,6 +35,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final BoardReactionRepository boardReactionRepository;
     private final JWTUtil jwtUtil;
 
 
@@ -38,7 +44,6 @@ public class BoardServiceImpl implements BoardService {
         Optional<User> userOptional = userRepository.findById(boardRequestDto.getAuthor());
         if(userOptional.isEmpty()) throw new UserNotFoundException("id: " + boardRequestDto.getAuthor());
         User user = userOptional.get();
-
 
         Board saveBoard = Board.builder()
                 .title(boardRequestDto.getTitle())
@@ -56,68 +61,54 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardResponseDto getBoard(Long id) {
-        Optional<Board> board = boardRepository.findById(id);
-        if (board.isEmpty()) {
-            throw new BoardNotFoundException(id);
+    public BoardResponseDto getBoard(Long id, String token) {
+        Board board = boardRepository.findById(id).orElseThrow(() -> new BoardNotFoundException(id));
+
+        String username = null;
+        if (token != null) {
+            try {
+                username = jwtUtil.getUsername(token);
+            } catch (Exception e) {
+                // 토큰이 잘못된 경우에도 그냥 넘어감
+            }
         }
 
-        Board findBoard = board.get();
-
-        return BoardResponseDto.from(findBoard);
+        String userReaction = null;
+        if (username != null) {
+            userReaction = userRepository.findByUsername(username)
+                    .flatMap(user -> boardReactionRepository.findByUserAndBoard(user, board))
+                    .map(reaction -> reaction.getReaction().toString())
+                    .orElse(null);
+        }
+        return BoardResponseDto.from(board, userReaction);
     }
 
     @Override
     public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto, String token) {
-        Optional<Board> board = boardRepository.findById(id);
-        if(board.isEmpty()) {
-            throw new BoardNotFoundException(id);
-        }
-        Board updateBoard = board.get();
-
-        if(token == null) {
-            throw new TokenNotFoundException();
-        }
+        Board board = boardRepository.findById(id).orElseThrow(() -> new BoardNotFoundException(id));
 
         String username = jwtUtil.getUsername(token);
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        if(userOptional.isEmpty()) {
-            throw new UserNotFoundException(username);
-        }
-        User user = userOptional.get();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
 
-        if(!updateBoard.getAuthor().equals(user.getId())) {
+        if(!board.getAuthor().getId().equals(user.getId())) {
             throw new AccessDeniedException("Access Denied");
         }
 
-        updateBoard.setTitle(boardRequestDto.getTitle());
-        updateBoard.setContent(boardRequestDto.getContent());
-        boardRepository.save(updateBoard);
+        board.setTitle(boardRequestDto.getTitle());
+        board.setContent(boardRequestDto.getContent());
+        boardRepository.save(board);
 
-        return BoardResponseDto.from(updateBoard);
+        return BoardResponseDto.from(board);
     }
 
     @Override
     public void deleteBoard(Long id, String token) {
-        Optional<Board> board = boardRepository.findById(id);
-        if(board.isEmpty()) {
-            throw new BoardNotFoundException(id);
-        }
-
-        Board deleteBoard = board.get();
-
-        if(token == null) {
-            throw new TokenNotFoundException();
-        }
+        Board board = boardRepository.findById(id).orElseThrow(() -> new BoardNotFoundException(id));
 
         String username = jwtUtil.getUsername(token);
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        if(userOptional.isEmpty()) {
-            throw new UserNotFoundException(username);
-        }
-        User user = userOptional.get();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
 
-        if(!deleteBoard.getAuthor().equals(user.getId())) {
+        if(!board.getAuthor().getId().equals(user.getId())) {
             throw new AccessDeniedException("Access Denied");
         }
 
@@ -134,7 +125,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardResponseDto> getBoards(int page) {
+    public Page<BoardResponseDto> getBoards(int page, String token) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findAll(pageable);
 
@@ -142,7 +133,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardResponseDto> getBoardsByAuthor(Long author, int page) {
+    public Page<BoardResponseDto> getBoardsByAuthor(Long author, int page, String token) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findByAuthor(author, pageable);
 
@@ -150,7 +141,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardResponseDto> getBoardsByTitle(String keyword, int page) {
+    public Page<BoardResponseDto> getBoardsByTitle(String keyword, int page, String token) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findByTitleContaining(keyword, pageable);
 
@@ -158,10 +149,80 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardResponseDto> getBoardsByContent(String keyword, int page) {
+    public Page<BoardResponseDto> getBoardsByContent(String keyword, int page, String token) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findByContentContaining(keyword, pageable);
 
         return boards.map(BoardResponseDto::from);
+    }
+
+    @Override
+    public BoardReactionResponseDto reactToBoard(BoardReactionRequestDto boardReactionRequestDto, String token) {
+        Board board = boardRepository.findById(boardReactionRequestDto.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException(boardReactionRequestDto.getBoardId()));
+
+//        if (token == null) {
+//            throw new TokenNotFoundException();
+//        }
+
+        String username = jwtUtil.getUsername(token);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        ReactionType newReaction = ReactionType.valueOf(boardReactionRequestDto.getUserReaction());
+        Optional<BoardReaction> existingReactionOpt = boardReactionRepository.findByUserAndBoard(user, board);
+
+        if (existingReactionOpt.isPresent()) {
+            BoardReaction existingReaction = existingReactionOpt.get();
+            ReactionType oldReaction = existingReaction.getReaction();
+
+            if (oldReaction == newReaction) {
+                // 반응 취소
+                boardReactionRepository.delete(existingReaction);
+                if (newReaction == ReactionType.LIKE) {
+                    board.setLike(board.getLike() - 1);
+                } else {
+                    board.setDislike(board.getDislike() - 1);
+                }
+            } else {
+                // 반응 변경
+                if (oldReaction == ReactionType.LIKE) {
+                    board.setLike(board.getLike() - 1);
+                    board.setDislike(board.getDislike() + 1);
+                } else {
+                    board.setLike(board.getLike() + 1);
+                    board.setDislike(board.getDislike() - 1);
+                }
+                existingReaction.setReaction(newReaction);
+                boardReactionRepository.save(existingReaction);
+            }
+        } else {
+            // 새로운 반응
+            BoardReaction newReactionEntity = BoardReaction.builder()
+                    .user(user)
+                    .board(board)
+                    .reaction(newReaction)
+                    .build();
+            boardReactionRepository.save(newReactionEntity);
+
+            if (newReaction == ReactionType.LIKE) {
+                board.setLike(board.getLike() + 1);
+            } else {
+                board.setDislike(board.getDislike() + 1);
+            }
+        }
+
+        boardRepository.save(board);
+
+        return BoardReactionResponseDto.builder()
+                .boardId(board.getId())
+                .likeCount(board.getLike())
+                .dislikeCount(board.getDislike())
+                .userReaction(
+                        boardReactionRepository.findByUserAndBoard(user, board)
+                                .map(r -> r.getReaction().toString())
+                                .orElse(null)
+                )
+                .build();
     }
 }

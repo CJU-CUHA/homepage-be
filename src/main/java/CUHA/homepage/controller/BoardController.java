@@ -2,6 +2,8 @@ package CUHA.homepage.controller;
 
 import CUHA.homepage.exception.TokenNotFoundException;
 import CUHA.homepage.exception.UserNotFoundException;
+import CUHA.homepage.security.dto.BoardReactionRequestDto;
+import CUHA.homepage.security.dto.BoardReactionResponseDto;
 import CUHA.homepage.security.dto.BoardRequestDto;
 import CUHA.homepage.security.dto.BoardResponseDto;
 import CUHA.homepage.service.BoardService;
@@ -37,52 +39,114 @@ public class BoardController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BoardResponseDto> getBoardById(
-            @PathVariable Long id) {
-        return ResponseEntity.ok(boardService.getBoard(id));
+            @PathVariable Long id,
+            @RequestHeader(value = "Authorization", required = false) String token
+    ) {
+
+        // JWT 토큰에서 "Bearer " 접두어 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        return ResponseEntity.ok(boardService.getBoard(id, token));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<BoardResponseDto> updateBoard(
             @PathVariable Long id,
             @RequestBody BoardRequestDto boardRequestDto,
-            HttpServletRequest request) {
-        return ResponseEntity.ok(boardService.updateBoard(id, boardRequestDto, request.getHeader("Authorization")));
+            @RequestHeader(value = "Authorization") String token) {
+
+        // JWT 토큰에서 "Bearer " 접두어 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        return ResponseEntity.ok(boardService.updateBoard(id, boardRequestDto, token));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBoard(
             @PathVariable Long id,
-            HttpServletRequest request) {
-        boardService.deleteBoard(id, request.getHeader("Authorization"));
+            @RequestHeader(value = "Authorization") String token) {
+
+        // JWT 토큰에서 "Bearer " 접두어 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        boardService.deleteBoard(id, token);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public ResponseEntity<Page<BoardResponseDto>> getAllBoards(
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(boardService.getBoards(page));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestHeader(value = "Authorization", required = false) String token
+    ) {
+        // JWT 토큰에서 "Bearer " 접두어 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        return ResponseEntity.ok(boardService.getBoards(page, token));
     }
     @GetMapping("/author/{authorId}")
     public ResponseEntity<Page<BoardResponseDto>> getBoardsByAuthor(
             @PathVariable Long authorId,
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(boardService.getBoardsByAuthor(authorId, page));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestHeader(value = "Authorization", required = false) String token
+    ) {
+        // JWT 토큰에서 "Bearer " 접두어 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        return ResponseEntity.ok(boardService.getBoardsByAuthor(authorId, page, token));
     }
 
     // 제목 검색
     @GetMapping("/search/title")
     public ResponseEntity<Page<BoardResponseDto>> searchByTitle(
             @RequestParam String keyword,
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(boardService.getBoardsByTitle(keyword, page));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestHeader(value = "Authorization", required = false) String token
+    ) {
+        // JWT 토큰에서 "Bearer " 접두어 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        return ResponseEntity.ok(boardService.getBoardsByTitle(keyword, page, token));
     }
 
     // 내용 검색
     @GetMapping("/search/content")
     public ResponseEntity<Page<BoardResponseDto>> searchByContent(
             @RequestParam String keyword,
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(boardService.getBoardsByContent(keyword, page));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestHeader(value = "Authorization", required = false) String token
+    ) {
+        // JWT 토큰에서 "Bearer " 접두어 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        return ResponseEntity.ok(boardService.getBoardsByContent(keyword, page, token));
+    }
+
+    @PostMapping("/reaction")
+    public ResponseEntity<BoardReactionResponseDto> reactToBoard(
+            @RequestBody BoardReactionRequestDto boardReactionRequestDto,
+            @RequestHeader(value = "Authorization") String token
+    ) {
+        // JWT 토큰에서 "Bearer " 접두어 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        BoardReactionResponseDto response = boardService.reactToBoard(boardReactionRequestDto, token);
+        return ResponseEntity.ok(response);
     }
 
     @ExceptionHandler(BoardNotFoundException.class)
@@ -100,6 +164,10 @@ public class BoardController {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }
 
