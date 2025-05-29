@@ -53,8 +53,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         String subtitle = scheduleRequestDto.getSubtitle();
         Long userId = scheduleRequestDto.getUserId();
 
-        if (scheduleRequestDto.getDate() == null ||
-                scheduleRequestDto.getTitle() == null) {
+        if (scheduleRequestDto.getDate() == null || scheduleRequestDto.getTitle() == null) {
             throw new IllegalArgumentException("날짜, 타이틀은 필수 항목입니다.");
         }
 
@@ -72,7 +71,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     public Schedule updateSchedule(ScheduleRequestDto scheduleRequestDto) {
         Long id = scheduleRequestDto.getId();
 
-        // 임시 예외생성, 코드 분리 예정
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
 
