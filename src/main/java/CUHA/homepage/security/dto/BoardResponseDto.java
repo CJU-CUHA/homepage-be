@@ -1,5 +1,6 @@
 package CUHA.homepage.security.dto;
 
+import CUHA.homepage.domain.Board;
 import lombok.*;
 
 @Getter
@@ -13,4 +14,13 @@ public class BoardResponseDto {
     private String title;
     private Long author;
     private String content;
+
+    public static BoardResponseDto from(Board board) {
+        return BoardResponseDto.builder()
+                .id(board.getId())
+                .title(board.getTitle())
+                .author(board.getAuthor())
+                .content(board.getContent())
+                .build();
+    }
 }

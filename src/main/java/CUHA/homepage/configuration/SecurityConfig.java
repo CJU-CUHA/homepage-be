@@ -12,6 +12,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -37,10 +43,9 @@ public class SecurityConfig {
 
         // CSRF 보호 비활성화 (API에서 사용하는 경우에 보안상 CSRF를 비활성화하는 경우가 많습니다)
         http.csrf((auth) -> auth.disable());
-
         // 기본 로그인 방식 비활성화 (form-login 사용을 비활성화)
         http.formLogin((auth) -> auth.disable());
-
+        http.cors(auth -> auth.disable());
         // 기본 HTTP Basic 인증 방식을 비활성화
         http.logout((auth) -> auth.disable());
 
@@ -50,8 +55,13 @@ public class SecurityConfig {
 
         // 경로별 접근 권한 설정
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/login", "/", "/join").permitAll()  // /login, /, /join 경로는 모든 사용자에게 허용
-                .anyRequest().authenticated());  // 나머지 모든 요청은 인증된 사용자만 접근 가능
+                .requestMatchers("/api/user/login", "/", "/api/user/join",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/webjars/**").permitAll()  // /login, /, /join 경로는 모든 사용자에게 허용
+                .anyRequest().permitAll());  // 나머지 모든 요청은 인증된 사용자만 접근 가능
 
         // 세션 관리 설정: Stateless로 설정하여 세션을 사용하지 않도록 합니다.
         // JWT 인증 방식에서 세션을 사용하지 않도록 하기 위해 STATELESS로 설정합니다.
@@ -60,5 +70,18 @@ public class SecurityConfig {
 
         // 설정한 보안 체인을 반환하여 적용합니다.
         return http.build();
+    }
+    // 🔹 CORS 설정을 위한 Bean 등록
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("*")); // 또는 특정 origin 설정 ex) List.of("http://localhost:3000")
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(false); // true로 설정하면 AllowedOrigins에 * 못 씀
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
