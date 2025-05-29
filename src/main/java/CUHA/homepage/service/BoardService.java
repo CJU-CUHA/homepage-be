@@ -1,8 +1,5 @@
 package CUHA.homepage.service;
 
-import CUHA.homepage.domain.Board;
-import CUHA.homepage.domain.ReactionType;
-import CUHA.homepage.domain.User;
 import CUHA.homepage.security.dto.BoardReactionRequestDto;
 import CUHA.homepage.security.dto.BoardReactionResponseDto;
 import CUHA.homepage.security.dto.BoardRequestDto;
