@@ -2,6 +2,10 @@ package CUHA.homepage.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,19 +14,25 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
+@EntityListeners(AuditingEntityListener.class)
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String title;
-    private Long author;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
     private String content;
     private Long like;
     private Long dislike;
-    @Temporal(TemporalType.TIMESTAMP)
+
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createdAt;
-    @Temporal(TemporalType.TIMESTAMP)
+
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 }
