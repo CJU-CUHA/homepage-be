@@ -21,6 +21,8 @@ public class User {
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+    @Enumerated(EnumType.STRING)
+    private Department department;
     private Long score;
     private String password;
     private boolean isActive;

@@ -35,9 +35,10 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardResponseDto createBoard(BoardRequestDto boardRequestDto) {
+
         Board saveBoard = Board.builder()
                 .title(boardRequestDto.getTitle())
-                .author(boardRequestDto.getAuthor())
+                .author(userRepository.findById(boardRequestDto.getAuthor()).get())
                 .content(boardRequestDto.getContent())
                 .like(0L)
                 .dislike(0L)
