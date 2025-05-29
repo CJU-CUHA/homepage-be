@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,9 +40,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardResponseDto createBoard(BoardRequestDto boardRequestDto) {
-        Optional<User> userOptional = userRepository.findById(boardRequestDto.getAuthor());
-        if(userOptional.isEmpty()) throw new UserNotFoundException("id: " + boardRequestDto.getAuthor());
-        User user = userOptional.get();
+        User user = userRepository.findById(boardRequestDto.getAuthor()).orElseThrow(() -> new UserNotFoundException("id: " + boardRequestDto.getAuthor()));
 
         Board saveBoard = Board.builder()
                 .title(boardRequestDto.getTitle())
@@ -49,8 +48,6 @@ public class BoardServiceImpl implements BoardService {
                 .content(boardRequestDto.getContent())
                 .like(0L)
                 .dislike(0L)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         boardRepository.save(saveBoard);
@@ -127,7 +124,7 @@ public class BoardServiceImpl implements BoardService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findAll(pageable);
 
-        return boards.map(BoardResponseDto::from);
+        return mapWithUserReaction(boards, token);
     }
 
     @Override
@@ -135,7 +132,7 @@ public class BoardServiceImpl implements BoardService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findByAuthor(author, pageable);
 
-        return boards.map(BoardResponseDto::from);
+        return mapWithUserReaction(boards, token);
     }
 
     @Override
@@ -143,7 +140,7 @@ public class BoardServiceImpl implements BoardService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findByTitleContaining(keyword, pageable);
 
-        return boards.map(BoardResponseDto::from);
+        return mapWithUserReaction(boards, token);
     }
 
     @Override
@@ -151,10 +148,11 @@ public class BoardServiceImpl implements BoardService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Board> boards = boardRepository.findByContentContaining(keyword, pageable);
 
-        return boards.map(BoardResponseDto::from);
+        return mapWithUserReaction(boards, token);
     }
 
     @Override
+    @Transactional
     public BoardReactionResponseDto reactToBoard(BoardReactionRequestDto boardReactionRequestDto, String token) {
         Board board = boardRepository.findById(boardReactionRequestDto.getBoardId())
                 .orElseThrow(() -> new BoardNotFoundException(boardReactionRequestDto.getBoardId()));
@@ -169,6 +167,7 @@ public class BoardServiceImpl implements BoardService {
 
         ReactionType newReaction = ReactionType.valueOf(boardReactionRequestDto.getUserReaction());
         Optional<BoardReaction> existingReactionOpt = boardReactionRepository.findByUserAndBoard(user, board);
+        String resultReaction = newReaction.toString();
 
         if (existingReactionOpt.isPresent()) {
             BoardReaction existingReaction = existingReactionOpt.get();
@@ -182,6 +181,7 @@ public class BoardServiceImpl implements BoardService {
                 } else {
                     board.setDislike(board.getDislike() - 1);
                 }
+                resultReaction = null;
             } else {
                 // 반응 변경
                 if (oldReaction == ReactionType.LIKE) {
@@ -216,11 +216,30 @@ public class BoardServiceImpl implements BoardService {
                 .boardId(board.getId())
                 .likeCount(board.getLike())
                 .dislikeCount(board.getDislike())
-                .userReaction(
-                        boardReactionRepository.findByUserAndBoard(user, board)
-                                .map(r -> r.getReaction().toString())
-                                .orElse(null)
-                )
+                .userReaction(resultReaction)
                 .build();
+    }
+
+
+    private Page<BoardResponseDto> mapWithUserReaction(Page<Board> boards, String token) {
+        User user = extractUserFromToken(token);
+        return boards.map(board -> {
+            String reaction = null;
+            if (user != null) {
+                reaction = boardReactionRepository.findByUserAndBoard(user, board)
+                        .map(r -> r.getReaction().toString())
+                        .orElse(null);
+            }
+            return BoardResponseDto.from(board, reaction);
+        });
+    }
+
+    private User extractUserFromToken(String token) {
+        try {
+            String username = jwtUtil.getUsername(token);
+            return userRepository.findByUsername(username).orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
