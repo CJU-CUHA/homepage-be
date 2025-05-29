@@ -9,6 +9,7 @@ import java.util.List;
 public interface ScheduleService {
     List<Schedule> getSchedule(int year, int month);
     Schedule getSchedule(LocalDate date);
+    List<Schedule> getAllSchedule();
     Schedule addSchedule(ScheduleRequestDto scheduleRequestDto);
     Schedule updateSchedule(ScheduleRequestDto scheduleRequestDto);
     Schedule deleteSchedule(ScheduleRequestDto scheduleRequestDto);

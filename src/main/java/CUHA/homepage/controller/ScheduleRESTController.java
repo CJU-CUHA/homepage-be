@@ -5,6 +5,7 @@ import CUHA.homepage.security.dto.ScheduleRequestDto;
 import CUHA.homepage.security.dto.ScheduleResponseDto;
 import CUHA.homepage.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
+import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,14 @@ public class ScheduleRESTController {
 
     // 나머지 기능 구현 후 구현 예정
     @GetMapping("/all")
-    public ScheduleResponseDto getAllScheduleData() {
-        return null;
+    public ResponseEntity<?> getAllScheduleList() {
+        try {
+            ScheduleResponseDto response = new ScheduleResponseDto(scheduleService.getAllSchedule());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                    .body("일정 데이터를 불러오는 중 오류가 발생했습니다.");
+        }
     }
 
     @PostMapping
