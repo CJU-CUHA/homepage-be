@@ -104,7 +104,6 @@ public class BoardServiceImpl implements BoardService {
                 .content(updateBoard.getContent())
                 .author(updateBoard.getAuthor())
                 .build();
-
     }
 
     @Override
