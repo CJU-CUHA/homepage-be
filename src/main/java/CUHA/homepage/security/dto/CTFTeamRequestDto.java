@@ -1,14 +1,19 @@
 package CUHA.homepage.security.dto;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class CTFRequestDto {
-        
+@Setter
+public class CTFTeamRequestDto {
+
+    @JsonProperty("team_name")
+    private String teamName;
+
+    private double points;
+
+    @JsonProperty("team_id")
+    private int teamId;
+
 }
