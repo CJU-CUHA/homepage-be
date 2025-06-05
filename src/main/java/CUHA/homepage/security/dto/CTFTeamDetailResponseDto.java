@@ -7,10 +7,10 @@ import java.util.List;
 @Getter
 public class CTFTeamDetailResponseDto {
 
-    private final List<CTFTeamDetailRequestDto> teamList;
+    private final CTFTeamDetailRequestDto teamDetail;
 
-    public CTFTeamDetailResponseDto(List<CTFTeamDetailRequestDto> teamList) {
-        this.teamList = teamList;
+    public CTFTeamDetailResponseDto(CTFTeamDetailRequestDto teamDetail) {
+        this.teamDetail = teamDetail;
     }
 
 }
