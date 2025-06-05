@@ -1,14 +1,11 @@
 package CUHA.homepage.controller;
 
-import CUHA.homepage.security.dto.CTFTeamDetailResponseDto;
-import CUHA.homepage.security.dto.CTFTeamResponseDto;
+import CUHA.homepage.security.dto.*;
 import CUHA.homepage.service.CTFTimeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.Timestamp;
 
 @RestController
 @RequestMapping("/api/ctftime")
@@ -42,7 +39,7 @@ public class CTFTimeRESTController {
     @GetMapping("/top/country/{country}") // 입력한 지역의 순위권 팀 출력
     public ResponseEntity<?> getCTFTimeTopByCountry(@PathVariable String country) {
         try {
-            CTFTeamDetailResponseDto response = ctfTimeService.getCTFTimeTopByCountry(country);
+            CTFTeamCountryResponseDto response = ctfTimeService.getCTFTimeTopByCountry(country);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
@@ -53,37 +50,77 @@ public class CTFTimeRESTController {
 
 
     @GetMapping("/events")
-    public ResponseEntity<?> getCTFTimeEvent(@RequestParam int limit, @RequestParam Timestamp start, @RequestParam Timestamp finish) {
-        return null;
+    public ResponseEntity<?> getCTFTimeEvent(@RequestParam int limit, @RequestParam long start, @RequestParam long finish) {
+        try {
+            CTFEventResponseDto response = ctfTimeService.getCTFTimeEvent(limit, start, finish);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                    .body("값을 불러오지 못했습니다.");
+        }
     }
 
     @GetMapping("/events/{id}")
     public ResponseEntity<?> getCTFTimeEventById(@PathVariable int id) {
+        try {
+            CTFEventResponseDto response = ctfTimeService.getCTFTimeEventById(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                    .body("값을 불러오지 못했습니다.");
+        }
+    }
+
+    @GetMapping("/events/upcoming")
+    public ResponseEntity<?> getCTFTimeEventUpcoming() {
         return null;
     }
 
 
-
     @GetMapping("/teams")
-    public ResponseEntity<?> getCTFTimeTeam() {
-        return null;
+    public ResponseEntity<?> getCTFTimeTeamList() {
+        try {
+            CTFTeamListResponseDto response = ctfTimeService.getCTFTimeTeamList();
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                    .body("값을 불러오지 못했습니다.");
+        }
     }
 
     @GetMapping("/teams/{id}")
     public ResponseEntity<?> getCTFTimeTeamById(@PathVariable int id) {
-        return null;
+        try {
+            CTFTeamDetailResponseDto response = ctfTimeService.getCTFTimeTeamDetail(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                    .body("값을 불러오지 못했습니다.");
+        }
     }
 
 
 
     @GetMapping("/results")
     public ResponseEntity<?> getCTFTimeResult() {
-        return null;
+        try {
+            CTFEventResultResponseDto response = ctfTimeService.getCTFTimeEventResult();
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                    .body("값을 불러오지 못했습니다.");
+        }
     }
 
     @GetMapping("/results/{year}")
     public ResponseEntity<?> getCTFTimeResultByYear(@PathVariable int year) {
-        return null;
+        try {
+            CTFEventResultResponseDto response = ctfTimeService.getCTFTimeEventResultByYear(year);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                    .body("값을 불러오지 못했습니다.");
+        }
     }
 
 
